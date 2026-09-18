@@ -1,842 +1,1109 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <link rel="manifest" href="manifest.json">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>سبورة مهام الطالب الجامعي</title>
-  <!-- خط تجوال العربي -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      /* الوضع الفاتح (السبورة البيضاء) */
-      --bg-body: #e5e7eb;
-      --bg-header: #ffffff;
-      --bg-board: #f4f5f7;
-      --board-dots: #cbd5e1;
-      --board-border: #cbd5e1;
-      --text-main: #1f2937;
-      --text-muted: #64748b;
-      --tip-bg: #eff6ff;
-      --tip-border: #bfdbfe;
-      --tip-text: #1e40af;
-      
-      --pin-red: #ef4444;
-      --pin-blue: #3b82f6;
-      --pin-green: #10b981;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سبورة مهام الطالب الجامعي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rakkas&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-body: #ece0c8;
+    --bg-header: #f4e9d4;
+    --bg-board: #ede0c4;
+    --board-dots: #c9b48f;
+    --board-border: #6b4a28;
+    --ink: #3b2a1a;
+    --text-main: #3b2a1a;
+    --text-muted: #7a6650;
+    --tip-bg: #f3dfae;
+    --tip-border: #b98a3d;
+    --tip-text: #5c3d15;
 
-      /* ألوان أوراق المهام */
-      --paper-assignment: #fef08a; /* أصفر */
-      --paper-exam: #fecaca;       /* أحمر فاتح */
-      --paper-task: #e0f2fe;       /* أزرق فاتح */
-      --paper-text: #0f172a;
-    }
+    --pin-red: #a8402a;
+    --pin-blue: #b8860b;
+    --pin-green: #4b6b43;
 
-    /* الوضع الداكن (السبورة الخضراء) */
-    body.dark-mode {
-      --bg-body: #0f172a;
-      --bg-header: #1e293b;
-      --bg-board: #143d29; /* لون السبورة الخضراء الكلاسيكية */
-      --board-dots: rgba(255, 255, 255, 0.15);
-      --board-border: #854d0e; /* إطار بني خشبي */
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --tip-bg: #064e3b;
-      --tip-border: #047857;
-      --tip-text: #a7f3d0;
+    --paper-assignment: #e8c987;
+    --paper-exam: #d98b6b;
+    --paper-task: #a9c19a;
+    --paper-text: #3b2a1a;
 
-      --paper-assignment: #fef08a;
-      --paper-exam: #fecaca;
-      --paper-task: #bae6fd;
-      --paper-text: #0f172a;
-    }
+    --accent: #8b5e34;
+    --accent-ink: #fdf6e8;
+    --danger: #a8402a;
+    --warn: #b9791f;
+    --doodle: #a85c32;
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Tajawal', sans-serif;
-      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-    }
+    --wood-a: #e6d3ab;
+    --wood-b: #d3b884;
+  }
 
-    body {
-      background-color: var(--bg-body);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 15px;
-    }
+  body.dark-mode {
+    --bg-body: #241a10;
+    --bg-header: #2f2318;
+    --bg-board: #2a1f14;
+    --board-dots: rgba(230,211,171,0.18);
+    --board-border: #4a3216;
+    --ink: #ecdfc4;
+    --text-main: #f3e8d2;
+    --text-muted: #c2ad88;
+    --tip-bg: #3a2c18;
+    --tip-border: #8a6a2f;
+    --tip-text: #f0dca0;
 
-    /* هيدر التطبيق */
-    header {
-      width: 100%;
-      max-width: 1200px;
-      margin-bottom: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 15px;
-      background: var(--bg-header);
-      padding: 15px 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
+    --paper-assignment: #d9b972;
+    --paper-exam: #c17953;
+    --paper-task: #7fa06f;
+    --paper-text: #241a10;
 
-    .logo-zone h1 {
-      font-size: 1.4rem;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    --accent: #c1893f;
+    --warn: #e0a238;
 
-    .logo-zone span {
-      background: #3b82f6;
-      color: white;
-      font-size: 0.75rem;
-      padding: 3px 8px;
-      border-radius: 6px;
-    }
+    --wood-a: #3a2c1c;
+    --wood-b: #2c2115;
+  }
 
-    /* أدوات التحكم والفلترة */
-    .controls {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+  *{ box-sizing:border-box; margin:0; padding:0; font-family:'Tajawal',sans-serif; }
+  body{
+    background:
+      repeating-linear-gradient(90deg, var(--wood-a) 0px, var(--wood-a) 34px, var(--wood-b) 34px, var(--wood-b) 68px),
+      var(--bg-body);
+    background-blend-mode:multiply;
+    color:var(--text-main);
+    min-height:100vh;
+    padding:18px;
+    transition:background-color .3s ease, color .3s ease;
+  }
+  .hand{ font-family:'Rakkas','Tajawal',serif; font-weight:400; }
+  :focus-visible{ outline:3px solid var(--accent); outline-offset:2px; }
 
-    .filter-btn {
-      border: none;
-      padding: 6px 14px;
-      border-radius: 20px;
-      background: rgba(148, 163, 184, 0.2);
-      color: var(--text-main);
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-    }
+  .shell{
+    max-width:1320px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:270px 1fr;
+    gap:20px;
+    align-items:start;
+  }
+  @media (max-width:880px){ .shell{ grid-template-columns:1fr; } }
 
-    .filter-btn.active, .filter-btn:hover {
-      background: #2563eb;
-      color: #ffffff;
-    }
+  /* ---------- hand-drawn sketch box ---------- */
+  .sketch{
+    position:relative;
+    z-index:0;
+    border:2.3px solid var(--ink);
+    background:var(--bg-header);
+    box-shadow:5px 5px 0 var(--ink);
+  }
+  .sketch::before{
+    content:'';
+    position:absolute; inset:-6px;
+    border:2px solid var(--ink);
+    opacity:.28;
+    transform:rotate(-.7deg);
+    pointer-events:none; z-index:-1;
+  }
 
-    .theme-toggle {
-      background: none;
-      border: 1px solid var(--text-muted);
-      color: var(--text-main);
-      padding: 6px 12px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
+  .sketch-btn{
+    font-family:'Tajawal',sans-serif;
+    font-weight:700;
+    font-size:.85rem;
+    background-image:repeating-linear-gradient(90deg, var(--wood-a) 0 8px, var(--wood-b) 8px 16px);
+    background-color:var(--bg-header);
+    color:var(--text-main);
+    border:2px solid var(--ink);
+    padding:7px 14px;
+    cursor:pointer;
+    box-shadow:3px 3px 0 var(--ink);
+    transition:transform .1s ease, box-shadow .1s ease;
+  }
+  .sketch-btn:hover{ transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink); }
+  .sketch-btn:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink); }
+  .sketch-btn.active{ background:var(--accent); color:var(--accent-ink); }
+  .sketch-btn.primary{ background:var(--accent); color:var(--accent-ink); }
+  .sketch-btn.danger{ background:var(--danger); color:#fff; }
+  .sketch-btn.small{ padding:5px 10px; font-size:.78rem; box-shadow:2px 2px 0 var(--ink); }
+  .sketch-btn:disabled{ opacity:.45; cursor:not-allowed; }
 
-    .add-btn {
-      background: #2563eb;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.9rem;
-    }
+  input, select, textarea{
+    font-family:'Tajawal',sans-serif;
+    font-size:.92rem;
+    background:var(--bg-body);
+    color:var(--text-main);
+    border:2px solid var(--ink);
+    padding:9px 10px;
+    width:100%;
+    outline:none;
+  }
+  label.checkline{ display:flex; align-items:center; gap:8px; font-size:.85rem; font-weight:700; cursor:pointer; }
+  label.checkline input[type="checkbox"]{ width:18px; height:18px; accent-color:var(--accent); }
 
-    .add-btn:hover {
-      background: #1d4ed8;
-    }
+  /* doodle underline for section headings */
+  .squiggle{ position:relative; display:inline-block; padding-bottom:6px; }
+  .squiggle::after{
+    content:'';
+    position:absolute; right:0; left:0; bottom:-1px; height:6px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10'%3E%3Cpath d='M0 5 Q 8 0 16 5 T 32 5 T 48 5 T 64 5 T 80 5 T 96 5' stroke='%23e1604c' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:repeat-x; background-size:60px 8px;
+  }
 
-    /* شريط النصيحة اليومية */
-    .tip-banner {
-      width: 100%;
-      max-width: 1200px;
-      background-color: var(--tip-bg);
-      border: 1px solid var(--tip-border);
-      color: var(--tip-text);
-      padding: 12px 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
+  /* ---------- sidebar ---------- */
+  .sidebar > * + *{ margin-top:16px; }
 
-    .tip-content {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+  .welcome-note{ padding:16px 15px 18px; transform:rotate(-1deg); }
+  .welcome-note .pinhead{ position:absolute; top:-9px; right:50%; transform:translateX(50%); width:14px; height:14px; border-radius:50%; background:var(--pin-red); box-shadow:0 3px 4px rgba(0,0,0,.35); }
+  .welcome-note h1{ font-size:1.3rem; line-height:1.35; margin:4px 0 4px; }
+  .welcome-note p{ font-size:.82rem; color:var(--text-muted); margin:0 0 10px; }
 
-    .refresh-tip-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.1rem;
-      color: inherit;
-      opacity: 0.8;
-    }
+  .sidebar-card{ padding:14px 15px 16px; }
+  .sidebar-card h2{ font-size:1.05rem; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
 
-    .refresh-tip-btn:hover {
-      opacity: 1;
-    }
+  .stats-row{ display:flex; justify-content:space-between; font-size:.85rem; font-weight:700; margin-bottom:6px; }
+  .progress-track{ border:2px solid var(--ink); height:14px; background:var(--bg-body); margin-bottom:12px; position:relative; }
+  .progress-fill{ height:100%; background:var(--accent); transition:width .4s ease; }
+  .stat-line{ font-size:.83rem; color:var(--text-muted); margin-bottom:4px; display:flex; align-items:center; gap:6px; }
 
-    /* إطار السبورة */
-    .whiteboard-frame {
-      width: 100%;
-      max-width: 1200px;
-      min-height: 70vh;
-      background-color: var(--bg-board);
-      background-image: radial-gradient(var(--board-dots) 1.5px, transparent 1.5px);
-      background-size: 24px 24px;
-      border: 12px solid var(--board-border);
-      border-radius: 16px;
-      box-shadow: inset 0 0 15px rgba(0,0,0,0.2), 0 10px 25px rgba(0,0,0,0.15);
-      padding: 25px;
-      position: relative;
-    }
+  .course-list{ list-style:none; display:flex; flex-direction:column; gap:7px; margin-bottom:10px; }
+  .course-chip{ display:flex; align-items:center; justify-content:space-between; gap:6px; padding:6px 9px; font-size:.83rem; font-weight:700; border:2px solid var(--ink); background:var(--paper-task); color:var(--paper-text); }
+  .course-chip:nth-child(3n+2){ background:var(--paper-assignment); }
+  .course-chip:nth-child(3n+3){ background:var(--paper-exam); }
+  .course-chip .rm{ background:none; border:none; cursor:pointer; color:inherit; opacity:.6; font-size:.9rem; font-family:'Tajawal',sans-serif; }
+  .course-chip .rm:hover{ opacity:1; }
+  .add-row{ display:flex; gap:6px; }
+  .add-row input{ flex:1; }
+  .muted-note{ font-size:.8rem; color:var(--text-muted); margin-bottom:8px; }
 
-    .whiteboard-frame::after {
-      content: '';
-      position: absolute;
-      bottom: -18px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 220px;
-      height: 12px;
-      background: #94a3b8;
-      border-radius: 4px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-    }
+  /* ---------- header ---------- */
+  header.sketch{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; padding:14px 18px; margin-bottom:18px; background-image:repeating-linear-gradient(90deg, var(--wood-a) 0 20px, var(--wood-b) 20px 40px); }
+  .logo-zone h1{ font-size:1.35rem; display:flex; align-items:center; gap:8px; }
+  .logo-zone span{ background:var(--accent); color:#fff; font-size:.72rem; padding:3px 8px; border:2px solid var(--ink); font-family:'Tajawal'; font-weight:700; }
+  .controls{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
-    /* شبكة الأوراق */
-    .board-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-    }
+  /* ---------- tip & reminder banners ---------- */
+  .tip-banner.sketch{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 16px; margin-bottom:14px; background:var(--tip-bg); color:var(--tip-text); font-size:.92rem; font-weight:600; }
+  .tip-content{ display:flex; align-items:center; gap:9px; }
+  .refresh-tip-btn{ background:none; border:none; cursor:pointer; font-size:1.05rem; color:inherit; }
 
-    /* ورقة المهمة */
-    .paper-note {
-      position: relative;
-      padding: 22px 16px 16px 16px;
-      border-radius: 2px 2px 10px 2px;
-      box-shadow: 3px 8px 15px rgba(0,0,0,0.18);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 210px;
-      word-wrap: break-word;
-      color: var(--paper-text);
-    }
+  .reminder-banner.sketch{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    padding:11px 16px; margin-bottom:14px; background:var(--paper-exam); color:var(--paper-text);
+    font-size:.88rem; font-weight:600;
+  }
+  .reminder-banner ul{ list-style:none; margin-top:4px; display:flex; flex-direction:column; gap:2px; }
+  .reminder-close{ background:none; border:none; cursor:pointer; font-size:1rem; color:inherit; opacity:.7; }
+  .reminder-close:hover{ opacity:1; }
 
-    .paper-note::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      border-width: 0 0 14px 14px;
-      border-style: solid;
-      border-color: transparent transparent rgba(0,0,0,0.15) transparent;
-    }
+  /* ---------- toolbar ---------- */
+  .toolbar.sketch{ display:flex; gap:10px; flex-wrap:wrap; padding:12px 16px; margin-bottom:14px; align-items:center; }
+  .toolbar input[type="search"]{ flex:1 1 220px; }
+  .toolbar select{ flex:0 0 auto; width:auto; min-width:150px; }
 
-    .paper-note:nth-child(3n+1) { transform: rotate(-1.5deg); }
-    .paper-note:nth-child(3n+2) { transform: rotate(1.2deg); }
-    .paper-note:nth-child(3n+3) { transform: rotate(-0.8deg); }
+  /* ---------- tabs ---------- */
+  .tabs{ display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .tab-btn.sketch-btn{ font-family:'Rakkas',serif; font-size:1.02rem; padding:8px 18px; }
+  .tab-btn .count{ font-family:'Tajawal'; font-size:.68rem; font-weight:800; background:var(--ink); color:var(--bg-header); padding:1px 6px; margin-inline-start:6px; }
+  .type-filters{ display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
 
-    .paper-note:hover {
-      transform: scale(1.03) rotate(0deg) !important;
-      z-index: 10;
-      box-shadow: 5px 12px 22px rgba(0,0,0,0.25);
-    }
+  /* ---------- whiteboard ---------- */
+  .whiteboard-frame{
+    width:100%; min-height:60vh;
+    background-color:var(--bg-board);
+    background-image:radial-gradient(var(--board-dots) 1.5px, transparent 1.5px);
+    background-size:24px 24px;
+    border:11px solid var(--board-border);
+    box-shadow:inset 0 0 15px rgba(0,0,0,.2), 6px 6px 0 var(--ink);
+    padding:24px; position:relative;
+  }
+  .board-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:22px 20px; }
 
-    .paper-note.assignment { background-color: var(--paper-assignment); }
-    .paper-note.exam { background-color: var(--paper-exam); }
-    .paper-note.task { background-color: var(--paper-task); }
+  .paper-note{
+    position:relative;
+    padding:20px 15px 15px;
+    border:2px solid var(--ink);
+    box-shadow:4px 5px 0 rgba(0,0,0,.28);
+    transition:transform .2s ease, box-shadow .2s ease, opacity .3s ease;
+    display:flex; flex-direction:column; justify-content:space-between;
+    min-height:200px; word-wrap:break-word; color:var(--paper-text);
+  }
+  .paper-note:nth-child(3n+1){ transform:rotate(-1.6deg); clip-path:polygon(0% 3%,4% 0%,30% 1%,55% 0%,80% 1%,97% 0%,100% 4%,99% 30%,100% 55%,99% 80%,100% 96%,96% 100%,70% 99%,45% 100%,20% 99%,3% 100%,0% 96%,1% 70%,0% 45%,1% 20%); }
+  .paper-note:nth-child(3n+2){ transform:rotate(1.3deg); clip-path:polygon(0% 2%,20% 0%,45% 1%,70% 0%,96% 1%,100% 3%,99% 25%,100% 50%,99% 75%,100% 97%,97% 100%,75% 99%,50% 100%,25% 99%,0% 100%,1% 78%,0% 53%,1% 28%,0% 2%,0% 2%); }
+  .paper-note:nth-child(3n+3){ transform:rotate(-.7deg); clip-path:polygon(2% 0%,28% 1%,52% 0%,77% 1%,100% 0%,99% 22%,100% 47%,99% 72%,100% 100%,73% 99%,48% 100%,23% 99%,0% 100%,1% 74%,0% 49%,1% 24%,0% 0%,26% 0%,2% 0%,2% 0%); }
+  .paper-note:hover{ transform:scale(1.03) rotate(0deg) !important; z-index:10; box-shadow:6px 8px 0 rgba(0,0,0,.32); }
+  .paper-note.dragging{ opacity:.35; }
+  .paper-note[draggable="true"]{ cursor:grab; }
 
-    /* الدبوس */
-    .pin {
-      position: absolute;
-      top: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      box-shadow: 0 3px 5px rgba(0,0,0,0.3);
-      z-index: 2;
-    }
-    .pin::after {
-      content: '';
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.7);
-    }
-    .paper-note.assignment .pin { background-color: var(--pin-blue); }
-    .paper-note.exam .pin { background-color: var(--pin-red); }
-    .paper-note.task .pin { background-color: var(--pin-green); }
+  .paper-note.assignment{ background-color:var(--paper-assignment); }
+  .paper-note.exam{ background-color:var(--paper-exam); }
+  .paper-note.task{ background-color:var(--paper-task); }
+  .paper-note.completed{ opacity:.85; }
 
-    /* محتوى المهمة */
-    .note-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 8px;
-      border-bottom: 1px dashed rgba(0,0,0,0.15);
-      padding-bottom: 6px;
-    }
+  .pin{ position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:16px; height:16px; border-radius:50%; box-shadow:0 3px 5px rgba(0,0,0,.3); z-index:2; }
+  .pin::after{ content:''; position:absolute; top:3px; left:3px; width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.7); }
+  .paper-note.assignment .pin{ background:var(--pin-blue); }
+  .paper-note.exam .pin{ background:var(--pin-red); }
+  .paper-note.task .pin{ background:var(--pin-green); }
 
-    .badge {
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(0,0,0,0.08);
-    }
+  .note-header{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; border-bottom:2px dashed rgba(0,0,0,.2); padding-bottom:6px; gap:6px; }
+  .badge{ font-size:.72rem; font-weight:800; padding:2px 7px; border:1.5px solid rgba(0,0,0,.4); white-space:nowrap; }
+  .course-title{ font-size:.83rem; font-weight:800; color:#5c4326; }
+  .note-title{ font-family:'Rakkas',serif; font-size:1.12rem; margin-bottom:7px; line-height:1.35; display:flex; align-items:center; gap:6px; }
+  .recur-icon{ font-size:.85rem; }
+  .note-desc{ font-size:.85rem; margin-bottom:14px; flex-grow:1; line-height:1.45; color:var(--paper-text); }
 
-    .course-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #334155;
-    }
+  .note-footer{ display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:8px; border-top:2px dashed rgba(0,0,0,.2); font-size:.78rem; flex-wrap:wrap; gap:6px; }
+  .due-date{ font-weight:800; padding:2px 6px; border:1.5px solid transparent; }
+  .due-date.due-warn{ color:var(--warn); border-color:var(--warn); }
+  .due-date.due-overdue{ color:var(--danger); border-color:var(--danger); }
+  .actions{ display:flex; gap:5px; }
+  .action-btn{ background:none; border:none; cursor:pointer; font-size:1rem; opacity:.75; }
+  .action-btn:hover{ opacity:1; }
 
-    .note-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      margin-bottom: 8px;
-      line-height: 1.3;
-    }
+  .paper-note.completed .note-title{ text-decoration:line-through; text-decoration-style:wavy; }
+  .completed-stamp{ position:absolute; top:40%; left:50%; transform:translate(-50%,-50%) rotate(-12deg); border:3px solid #5b6b3f; color:#5b6b3f; font-family:'Rakkas',serif; font-size:1.15rem; padding:4px 12px; display:none; pointer-events:none; }
+  .paper-note.completed .completed-stamp{ display:block; }
 
-    .note-desc {
-      font-size: 0.88rem;
-      margin-bottom: 15px;
-      flex-grow: 1;
-      line-height: 1.4;
-      color: #1e293b;
-    }
+  .empty-state{ grid-column:1/-1; text-align:center; padding:46px 18px; color:var(--text-muted); }
+  .empty-state div{ font-size:2.6rem; margin-bottom:8px; }
+  .empty-state h3{ font-family:'Rakkas',serif; font-weight:400; margin-bottom:4px; font-size:1.2rem; color:var(--text-main); }
 
-    .note-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-      padding-top: 8px;
-      border-top: 1px dashed rgba(0,0,0,0.15);
-      font-size: 0.8rem;
-    }
+  /* ---------- modals ---------- */
+  .modal-overlay{ position:fixed; inset:0; background:rgba(15,23,42,.6); display:flex; justify-content:center; align-items:center; z-index:100; opacity:0; pointer-events:none; transition:opacity .25s ease; padding:15px; }
+  .modal-overlay.active{ opacity:1; pointer-events:all; }
+  .modal{ background:var(--bg-header); color:var(--text-main); padding:24px; width:100%; max-width:440px; max-height:88vh; overflow:auto; }
+  .modal h2{ font-family:'Rakkas',serif; margin-bottom:14px; font-size:1.25rem; }
+  .modal p.confirm-msg{ font-size:.95rem; line-height:1.5; margin-bottom:6px; }
+  .form-group{ margin-bottom:14px; }
+  .form-group label{ display:block; font-size:.83rem; font-weight:700; margin-bottom:5px; }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:18px; flex-wrap:wrap; }
+  .btn-cancel{ background:transparent; color:var(--text-main); border:2px solid var(--ink); padding:8px 15px; cursor:pointer; font-weight:700; }
+  .course-add-inline{ display:flex; gap:6px; margin-top:6px; }
+  .course-add-inline input{ flex:1; }
+  .settings-section + .settings-section{ margin-top:18px; padding-top:16px; border-top:2px dashed rgba(120,120,120,.35); }
+  .settings-section h3{ font-size:.88rem; font-weight:800; margin-bottom:10px; color:var(--text-muted); }
+  .import-input{ display:none; }
 
-    .due-date {
-      font-weight: 700;
-    }
-
-    .actions {
-      display: flex;
-      gap: 6px;
-    }
-
-    .action-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      opacity: 0.7;
-    }
-
-    .action-btn:hover {
-      opacity: 1;
-    }
-
-    /* حالة الإنجاز */
-    .paper-note.completed {
-      opacity: 0.6;
-      filter: grayscale(50%);
-    }
-
-    .paper-note.completed .note-title {
-      text-decoration: line-through;
-    }
-
-    .completed-stamp {
-      position: absolute;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-12deg);
-      border: 3px solid #16a34a;
-      color: #16a34a;
-      font-weight: 900;
-      font-size: 1.2rem;
-      padding: 4px 12px;
-      border-radius: 6px;
-      display: none;
-      pointer-events: none;
-    }
-
-    .paper-note.completed .completed-stamp {
-      display: block;
-    }
-
-    /* النافذة المنبثقة (Modal) */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(4px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-      padding: 15px;
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .modal {
-      background: var(--bg-header);
-      color: var(--text-main);
-      padding: 25px;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 450px;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
-    }
-
-    .modal h2 {
-      margin-bottom: 15px;
-      font-size: 1.2rem;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
-
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid var(--text-muted);
-      border-radius: 6px;
-      background: var(--bg-body);
-      color: var(--text-main);
-      outline: none;
-      font-size: 0.95rem;
-    }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .btn-cancel {
-      background: rgba(148, 163, 184, 0.2);
-      color: var(--text-main);
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 50px 20px;
-      color: var(--text-muted);
-    }
-
-    .empty-state div {
-      font-size: 3rem;
-      margin-bottom: 10px;
-    }
-
-    /* Responsive */
-    @media (max-width: 640px) {
-      header {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .controls {
-        justify-content: space-between;
-      }
-
-      .filter-btn {
-        flex: 1;
-        text-align: center;
-        padding: 6px 8px;
-        font-size: 0.75rem;
-      }
-
-      .whiteboard-frame {
-        padding: 15px;
-        border-width: 8px;
-      }
-
-      .board-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  @media (max-width:640px){
+    header{ flex-direction:column; align-items:stretch; }
+    .controls{ justify-content:space-between; }
+    .whiteboard-frame{ padding:14px; border-width:8px; }
+    .board-grid{ grid-template-columns:1fr; }
+    .toolbar select{ flex:1 1 45%; }
+  }
+</style>
 </head>
 <body>
 
-  <!-- الهيدر والتحكم -->
-  <header>
-    <div class="logo-zone">
-      <h1>📌 سبورة المهام <span>الجامعية</span></h1>
+<div class="shell">
+
+  <aside class="sidebar">
+    <section class="welcome-note sketch">
+      <div class="pinhead"></div>
+      <h1 id="welcomeText" class="hand">أهلاً بك 👋</h1>
+      <p>نظّم مساقاتك ومهامك الجامعية من مكان واحد.</p>
+      <button class="sketch-btn small" id="openSettingsBtn" type="button">⚙️ الإعدادات</button>
+    </section>
+
+    <section class="sidebar-card sketch">
+      <h2 class="hand squiggle">📊 نظرة سريعة</h2>
+      <p class="stat-line" id="weekStatLine">📅 لا مهام هذا الأسبوع</p>
+      <div class="stats-row"><span>نسبة الإنجاز</span><span id="completionPct">0%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+    </section>
+
+    <section class="sidebar-card sketch">
+      <h2 class="hand squiggle">🗂️ المساقات الدراسية</h2>
+      <p class="muted-note" id="courseEmptyNote">لم تُضف أي مساق بعد.</p>
+      <ul class="course-list" id="courseList"></ul>
+      <div class="add-row">
+        <input id="courseInput" type="text" placeholder="اسم المساق الجديد...">
+        <button class="sketch-btn small" id="addCourseBtn" type="button">إضافة</button>
+      </div>
+    </section>
+  </aside>
+
+  <div>
+    <header class="sketch">
+      <div class="logo-zone">
+        <h1 class="hand">📌 سبورة المهام <span>الجامعية</span></h1>
+      </div>
+      <div class="controls">
+        <button class="sketch-btn" id="addNoteBtn" type="button">+ إضافة ورقة</button>
+        <button class="sketch-btn" onclick="toggleDarkMode()" id="themeBtn" type="button">🌙 الوضع الداكن</button>
+      </div>
+    </header>
+
+    <div class="tip-banner sketch">
+      <div class="tip-content">
+        <span>💡</span>
+        <span id="academicTip">جاري تحميل النصيحة الدراسية...</span>
+      </div>
+      <button class="refresh-tip-btn" onclick="displayRandomTip()" title="نصيحة أخرى">🔄</button>
     </div>
 
-    <div class="controls">
-      <button class="filter-btn active" onclick="filterNotes('all', event)">الكل</button>
-      <button class="filter-btn" onclick="filterNotes('assignment', event)">📝 واجبات</button>
-      <button class="filter-btn" onclick="filterNotes('exam', event)">🚨 امتحانات</button>
-      <button class="filter-btn" onclick="filterNotes('task', event)">📌 أخرى</button>
-      
-      <button class="theme-toggle" onclick="toggleDarkMode()" id="themeBtn">
-        🌙 الوضع الداكن
-      </button>
-
-      <button class="add-btn" onclick="openModal()">
-        <span>+</span> إضافة ورقة
-      </button>
+    <div class="reminder-banner sketch" id="reminderBanner" style="display:none;">
+      <div>
+        <strong id="reminderTitle">🔔 تذكير</strong>
+        <ul id="reminderList"></ul>
+      </div>
+      <button class="reminder-close" id="reminderCloseBtn" title="إغلاق">✕</button>
     </div>
-  </header>
 
-  <!-- شريط النصيحة الدراسية -->
-  <div class="tip-banner">
-    <div class="tip-content">
-      <span>💡</span>
-      <span id="academicTip">جاري تحميل النصيحة الدراسية...</span>
+    <div class="toolbar sketch">
+      <input type="search" id="searchInput" placeholder="🔍 ابحث عن مهمة...">
+      <select id="courseFilterSelect"><option value="">كل المساقات</option></select>
+      <select id="sortSelect">
+        <option value="manual">ترتيب: الأولوية اليدوية</option>
+        <option value="date">ترتيب: الأقرب استحقاقًا</option>
+        <option value="course">ترتيب: المساق</option>
+      </select>
     </div>
-    <button class="refresh-tip-btn" onclick="displayRandomTip()" title="نصيحة أخرى">🔄</button>
+
+    <div class="tabs">
+      <button class="sketch-btn tab-btn active" id="tabActiveBtn" type="button">📌 اللوحة النشطة <span class="count" id="activeCount">0</span></button>
+      <button class="sketch-btn tab-btn" id="tabDoneBtn" type="button">✅ المهام المنجزة <span class="count" id="doneCount">0</span></button>
+    </div>
+
+    <div class="type-filters" id="typeFilters">
+      <button class="sketch-btn small active" data-type="all" type="button">الكل</button>
+      <button class="sketch-btn small" data-type="assignment" type="button">📝 واجبات</button>
+      <button class="sketch-btn small" data-type="exam" type="button">🚨 امتحانات</button>
+      <button class="sketch-btn small" data-type="task" type="button">📌 أخرى</button>
+    </div>
+
+    <main class="whiteboard-frame">
+      <div class="board-grid" id="boardGrid"></div>
+    </main>
   </div>
 
-  <!-- جسم السبورة -->
-  <main class="whiteboard-frame">
-    <div class="board-grid" id="boardGrid">
-      <!-- توليد المهام بواسطة JavaScript -->
+</div>
+
+<!-- نافذة إضافة / تعديل مهمة -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal sketch">
+    <h2 id="modalTitle">تعليق ورقة جديدة على السبورة</h2>
+    <form id="noteForm">
+      <div class="form-group">
+        <label>عنوان المهمة / الامتحان</label>
+        <input type="text" id="noteTitle" placeholder="مثال: تسليم مشروع خوارزميات" required>
+      </div>
+
+      <div class="form-group">
+        <label>المادة / المساق</label>
+        <select id="courseSelect" required></select>
+        <div class="course-add-inline" id="quickAddCourseRow" style="display:none;">
+          <input type="text" id="quickCourseInput" placeholder="اكتب اسم المساق الجديد...">
+          <button type="button" class="sketch-btn small" id="quickAddCourseBtn">إضافة</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>نوع الورقة</label>
+        <select id="noteType">
+          <option value="assignment">📝 واجب دراسي (أصفر)</option>
+          <option value="exam">🚨 امتحان / اختبار (أحمر)</option>
+          <option value="task">📌 مهمة تنظيمية (أزرق)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>تاريخ الاستحقاق / الموعد</label>
+        <input type="date" id="dueDate" required>
+      </div>
+
+      <div class="form-group">
+        <label class="checkline"><input type="checkbox" id="recurCheckbox"> 🔁 تتكرر أسبوعيًا</label>
+      </div>
+
+      <div class="form-group">
+        <label>ملاحظات إضافية</label>
+        <textarea id="noteDesc" rows="3" placeholder="أضف أي تفاصيل سريعة..."></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" id="cancelModalBtn">إلغاء</button>
+        <button type="submit" class="sketch-btn primary" id="submitBtn">تثبيت بالدبوس 📌</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- نافذة الإعدادات -->
+<div class="modal-overlay" id="settingsOverlay">
+  <div class="modal sketch">
+    <h2>⚙️ الإعدادات</h2>
+
+    <div class="settings-section">
+      <h3>الحساب</h3>
+      <div class="form-group">
+        <label>اسم المستخدم</label>
+        <input type="text" id="usernameInput" placeholder="اكتب اسمك...">
+      </div>
     </div>
-  </main>
 
-  <!-- نافذة إضافة / تعديل المهمة -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <h2 id="modalTitle">تعليق ورقة جديدة على السبورة</h2>
-      <form id="noteForm" onsubmit="saveNote(event)">
-        <div class="form-group">
-          <label>عنوان المهمة / الامتحان</label>
-          <input type="text" id="noteTitle" placeholder="مثال: تسليم مشروع خوارزميات" required>
-        </div>
+    <div class="settings-section">
+      <h3>التنبيهات والصوت</h3>
+      <div class="form-group">
+        <label class="checkline"><input type="checkbox" id="notifyCheckbox"> 🔔 تذكير بالمهام المستحقة غدًا</label>
+      </div>
+      <div class="form-group">
+        <label class="checkline"><input type="checkbox" id="soundCheckbox"> 🔈 صوت عند تثبيت ورقة جديدة</label>
+      </div>
+    </div>
 
-        <div class="form-group">
-          <label>المادة / المساق</label>
-          <input type="text" id="courseTitle" placeholder="مثال: أنظمة التحكم الخطية" required>
-        </div>
+    <div class="settings-section">
+      <h3>نسخ احتياطي</h3>
+      <div class="modal-actions" style="justify-content:flex-start;">
+        <button type="button" class="sketch-btn small" id="exportBtn" style="display:none;">⬇️ تصدير نسخة احتياطية</button>
+        <button type="button" class="sketch-btn small" id="importBtn">⬆️ استيراد نسخة</button>
+        <input type="file" accept="application/json" class="import-input" id="importInput">
+      </div>
+    </div>
 
-        <div class="form-group">
-          <label>نوع الورقة</label>
-          <select id="noteType">
-            <option value="assignment">📝 واجب دراسي (أصفر)</option>
-            <option value="exam">🚨 امتحان / اختبار (أحمر)</option>
-            <option value="task">📌 مهمة تنظيمية (أزرق)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>تاريخ الاستحقاق / الموعد</label>
-          <input type="date" id="dueDate" required>
-        </div>
-
-        <div class="form-group">
-          <label>ملاحظات إضافية</label>
-          <textarea id="noteDesc" rows="3" placeholder="أضف أي تفاصيل سريعة..."></textarea>
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" class="btn-cancel" onclick="closeModal()">إلغاء</button>
-          <button type="submit" class="add-btn" id="submitBtn">تثبيت بالدبوس 📌</button>
-        </div>
-      </form>
+    <div class="modal-actions">
+      <button type="button" class="btn-cancel" id="cancelSettingsBtn">إغلاق</button>
+      <button type="button" class="sketch-btn primary" id="saveSettingsBtn">حفظ</button>
     </div>
   </div>
+</div>
 
-  <script>
-    // النصائح الدراسية
-    const academicTips = [
-      "تقنية بومودورو: ذاكر لمدة 25 دقيقة ثم خذ استراحة لمدة 5 دقائق لتجديد تركيزك.",
-      "شرح المادة لغيرك أو لنفسك بصوت عالٍ هو أفضل طريقة لاختبار فهمك الحقيقي.",
-      "لا تراكم الدراسة؛ مراجعة 20 دقيقة يومياً أفضل من 8 ساعات ليلة الامتحان.",
-      "اكتب التواريخ المهمة للامتحانات والواجبات فور إعلانها لتقليل التوتر.",
-      "تأكد من أخذ قسط كافٍ من النوم قبل الامتحانات، فالنوم يرسخ المعلومات في الذاكرة.",
-      "قسم المشاريع الكبيرة إلى مهام صغيرة جداً على السبورة لتسهيل البدء فيها.",
-      "قم بحل أسئلة السنوات السابقة؛ فهي تعطيك فكرة دقيقة عن نمط أسئلة الدكتور."
+<!-- نافذة تأكيد عامة -->
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal sketch" style="max-width:380px;">
+    <h2 id="confirmTitle">تأكيد</h2>
+    <p class="confirm-msg" id="confirmMsg"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn-cancel" id="confirmCancelBtn">إلغاء</button>
+      <button type="button" class="sketch-btn danger" id="confirmOkBtn">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var academicTips = [
+    "تقنية بومودورو: ذاكر لمدة 25 دقيقة ثم خذ استراحة لمدة 5 دقائق لتجديد تركيزك.",
+    "شرح المادة لغيرك أو لنفسك بصوت عالٍ هو أفضل طريقة لاختبار فهمك الحقيقي.",
+    "لا تراكم الدراسة؛ مراجعة 20 دقيقة يومياً أفضل من 8 ساعات ليلة الامتحان.",
+    "اكتب التواريخ المهمة للامتحانات والواجبات فور إعلانها لتقليل التوتر.",
+    "تأكد من أخذ قسط كافٍ من النوم قبل الامتحانات، فالنوم يرسخ المعلومات في الذاكرة.",
+    "قسم المشاريع الكبيرة إلى مهام صغيرة جداً على السبورة لتسهيل البدء فيها.",
+    "قم بحل أسئلة السنوات السابقة؛ فهي تعطيك فكرة دقيقة عن نمط أسئلة الدكتور."
+  ];
+
+  function loadJSON(key, fallback){
+    try{
+      var raw = localStorage.getItem(key);
+      if(!raw) return fallback;
+      var parsed = JSON.parse(raw);
+      return parsed == null ? fallback : parsed;
+    }catch(e){ return fallback; }
+  }
+  function saveJSON(key, value){
+    try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){ /* ignore */ }
+  }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+  function todayISO(){
+    var d = new Date();
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  }
+  function addDaysISO(iso, days){
+    var d = new Date(iso + "T00:00:00");
+    d.setDate(d.getDate() + days);
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  }
+  function diffDaysFromToday(iso){
+    var today = new Date(todayISO() + "T00:00:00");
+    var target = new Date(iso + "T00:00:00");
+    return Math.round((target - today) / 86400000);
+  }
+  function escapeHtml(text){
+    var div = document.createElement('div');
+    div.innerText = text == null ? '' : text;
+    return div.innerHTML;
+  }
+  function getTypeName(type){
+    switch(type){ case 'assignment': return 'واجب'; case 'exam': return 'امتحان'; case 'task': return 'مهمة'; default: return ''; }
+  }
+
+  // ---------- state ----------
+  var courses = loadJSON('student_courses_v2', null);
+  var notes = loadJSON('student_notes_v2', null);
+  var settings = loadJSON('student_settings_v2', null);
+  var manualOrder = loadJSON('student_manual_order_v2', null);
+  var remindedIds = loadJSON('student_reminded_v2', []);
+
+  // ---------- migrate legacy v1 data (plain string courses / course text on notes) ----------
+  if(courses === null || notes === null){
+    var legacyCourseNames = loadJSON('student_courses', []);
+    var legacyNotes = loadJSON('student_whiteboard_notes', []);
+    var legacyUsername = loadJSON('student_username', '');
+
+    courses = legacyCourseNames.map(function(name){ return { id: uid(), name: name }; });
+    function findOrCreateCourseId(name){
+      if(!name) return courses.length ? courses[0].id : null;
+      var found = courses.find(function(c){ return c.name === name; });
+      if(found) return found.id;
+      var made = { id: uid(), name: name };
+      courses.push(made);
+      return made.id;
+    }
+    notes = legacyNotes.map(function(n){
+      return {
+        id: n.id || uid(),
+        title: n.title, courseId: findOrCreateCourseId(n.course),
+        type: n.type, date: n.date, desc: n.desc,
+        completed: !!n.completed, completedAt: n.completedAt || null,
+        recurring: false
+      };
+    });
+    settings = { username: legacyUsername, notificationsEnabled:false, soundEnabled:true };
+  }
+  if(courses === null) courses = [];
+  if(notes === null){
+    var c1 = { id: uid(), name: 'أنظمة التحكم' }, c2 = { id: uid(), name: 'قواعد البيانات' };
+    courses = [c1, c2];
+    notes = [
+      { id: uid(), title:'حل واجب التحكم الخطي', courseId:c1.id, type:'assignment', date:addDaysISO(todayISO(),5), desc:'كتابة كود MATLAB لتأكيد استجابة النظام من الدرجة الثانية.', completed:false, completedAt:null, recurring:false },
+      { id: uid(), title:'امتحان منتصف الفصل (Midterm)', courseId:c2.id, type:'exam', date:addDaysISO(todayISO(),10), desc:'مراجعة المخططات ERD وأوامر DDL و PostgreSQL.', completed:false, completedAt:null, recurring:false }
     ];
+  }
+  if(settings === null) settings = {};
+  if(typeof settings.username !== 'string') settings.username = '';
+  if(typeof settings.notificationsEnabled !== 'boolean') settings.notificationsEnabled = false;
+  if(typeof settings.soundEnabled !== 'boolean') settings.soundEnabled = true;
+  if(manualOrder === null) manualOrder = notes.map(function(n){ return n.id; });
+  // keep manualOrder in sync with existing note ids
+  notes.forEach(function(n){ if(manualOrder.indexOf(n.id) === -1) manualOrder.push(n.id); });
+  manualOrder = manualOrder.filter(function(id){ return notes.some(function(n){ return n.id === id; }); });
 
-    // جلب البيانات أو استخدام القائمة الافتراضية
-    let notes = JSON.parse(localStorage.getItem('student_whiteboard_notes')) || [
-      {
-        id: 1,
-        title: 'حل واجب التحكم الخطي',
-        course: 'أنظمة التحكم',
-        type: 'assignment',
-        date: '2026-08-20',
-        desc: 'كتابة كود MATLAB لتأكيد استجابة النظام من الدرجة الثانية.',
-        completed: false
-      },
-      {
-        id: 2,
-        title: 'امتحان منتصف الفصل (Midterm)',
-        course: 'قواعد البيانات',
-        type: 'exam',
-        date: '2026-08-26',
-        desc: 'مراجعة المخططات ERD وأوامر DDL و PostgreSQL.',
-        completed: false
-      }
-    ];
+  function persistNotes(){ saveJSON('student_notes_v2', notes); }
+  function persistCourses(){ saveJSON('student_courses_v2', courses); }
+  function persistSettings(){ saveJSON('student_settings_v2', settings); }
+  function persistOrder(){ saveJSON('student_manual_order_v2', manualOrder); }
+  function persistReminded(){ saveJSON('student_reminded_v2', remindedIds); }
 
-    let currentFilter = 'all';
-    let editingNoteId = null; // متغيرة لمتابعة الورقة الجاري تعديلها
+  function courseName(id){
+    var c = courses.find(function(c){ return c.id === id; });
+    return c ? c.name : 'مساق محذوف';
+  }
 
-    // إدارة الوضع الداكن
-    function initDarkMode() {
-      const isDark = localStorage.getItem('student_theme') === 'dark';
-      if (isDark) {
-        document.body.classList.add('dark-mode');
-        document.getElementById('themeBtn').innerHTML = '☀️ الوضع الفاتح';
-      }
-    }
+  var currentTypeFilter = 'all';
+  var currentTab = 'active';
+  var editingNoteId = null;
+  var searchQuery = '';
+  var courseFilterId = '';
+  var sortMode = 'manual';
+  var draggedId = null;
 
-    function toggleDarkMode() {
-      const body = document.body;
-      body.classList.toggle('dark-mode');
-      const isDark = body.classList.contains('dark-mode');
-      localStorage.setItem('student_theme', isDark ? 'dark' : 'light');
-      document.getElementById('themeBtn').innerHTML = isDark ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';
-    }
+  // ================= THEME =================
+  function initDarkMode(){
+    var isDark = localStorage.getItem('student_theme') === 'dark';
+    if(isDark){ document.body.classList.add('dark-mode'); document.getElementById('themeBtn').innerHTML = '☀️ الوضع الفاتح'; }
+  }
+  window.toggleDarkMode = function(){
+    var body = document.body;
+    body.classList.toggle('dark-mode');
+    var isDark = body.classList.contains('dark-mode');
+    try{ localStorage.setItem('student_theme', isDark ? 'dark' : 'light'); }catch(e){}
+    document.getElementById('themeBtn').innerHTML = isDark ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';
+  };
 
-    // عرض نصيحة عشوائية
-    function displayRandomTip() {
-      const randomIndex = Math.floor(Math.random() * academicTips.length);
-      document.getElementById('academicTip').innerText = academicTips[randomIndex];
-    }
+  window.displayRandomTip = function(){
+    var i = Math.floor(Math.random() * academicTips.length);
+    document.getElementById('academicTip').innerText = academicTips[i];
+  };
 
-    // حفظ في التخزين المحلي
-    function saveToLocalStorage() {
-      localStorage.setItem('student_whiteboard_notes', JSON.stringify(notes));
-    }
+  // ================= WELCOME =================
+  function renderWelcome(){
+    var name = (settings.username || '').trim();
+    document.getElementById('welcomeText').textContent = name ? ('أهلاً، ' + name + ' 👋') : 'أهلاً بك 👋';
+  }
 
-    // عرض البطاقات على السبورة
-    function renderNotes() {
-      const grid = document.getElementById('boardGrid');
-      grid.innerHTML = '';
+  // ================= STATS =================
+  function renderStats(){
+    var active = notes.filter(function(n){ return !n.completed; });
+    var done = notes.filter(function(n){ return n.completed; });
+    var weekCount = active.filter(function(n){ var d = diffDaysFromToday(n.date); return d >= 0 && d <= 6; }).length;
+    document.getElementById('weekStatLine').textContent = weekCount > 0 ? ('📅 لديك ' + weekCount + ' مهمة هذا الأسبوع') : '📅 لا مهام هذا الأسبوع';
+    var total = active.length + done.length;
+    var pct = total > 0 ? Math.round((done.length / total) * 100) : 0;
+    document.getElementById('completionPct').textContent = pct + '%';
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
 
-      const filteredNotes = notes.filter(n => currentFilter === 'all' || n.type === currentFilter);
+  // ================= COURSES =================
+  function renderCourses(){
+    var list = document.getElementById('courseList');
+    var emptyNote = document.getElementById('courseEmptyNote');
+    list.innerHTML = '';
+    emptyNote.style.display = courses.length ? 'none' : 'block';
 
-      if (filteredNotes.length === 0) {
-        grid.innerHTML = `
-          <div class="empty-state">
-            <div>🧼</div>
-            <h3>السبورة نظيفة تماماً!</h3>
-            <p>لا توجد مهام حالية تحت هذا التصنيف.</p>
-          </div>
-        `;
-        return;
-      }
+    courses.forEach(function(c){
+      var li = document.createElement('li');
+      li.className = 'course-chip';
+      li.innerHTML = '<span>' + escapeHtml(c.name) + '</span><button class="rm" type="button" data-id="' + c.id + '" title="حذف المساق">✕</button>';
+      list.appendChild(li);
+    });
 
-      filteredNotes.forEach(note => {
-        const paper = document.createElement('div');
-        paper.className = `paper-note ${note.type} ${note.completed ? 'completed' : ''}`;
-        
-        paper.innerHTML = `
-          <div class="pin"></div>
-          <div class="completed-stamp">تم الإنجاز</div>
-          
-          <div>
-            <div class="note-header">
-              <span class="course-title">${escapeHtml(note.course)}</span>
-              <span class="badge">${getTypeName(note.type)}</span>
-            </div>
-            <div class="note-title">${escapeHtml(note.title)}</div>
-            <div class="note-desc">${escapeHtml(note.desc || 'لا توجد ملاحظات.')}</div>
-          </div>
-
-          <div class="note-footer">
-            <span class="due-date">📅 ${note.date}</span>
-            <div class="actions">
-              <button class="action-btn" onclick="toggleComplete(${note.id})" title="تغيير حالة الإنجاز">
-                ${note.completed ? '↩️' : '✅'}
-              </button>
-              <button class="action-btn" onclick="openModal(${note.id})" title="تعديل المهمة">✏️</button>
-              <button class="action-btn" onclick="deleteNote(${note.id})" title="حذف الورقة">🗑️</button>
-            </div>
-          </div>
-        `;
-
-        grid.appendChild(paper);
+    // note-modal course select
+    var select = document.getElementById('courseSelect');
+    var current = select.value;
+    select.innerHTML = '';
+    if(courses.length === 0){
+      var opt0 = document.createElement('option'); opt0.value = ''; opt0.textContent = 'لا توجد مساقات — أضف واحدًا أولاً';
+      select.appendChild(opt0);
+    }else{
+      courses.forEach(function(c){
+        var opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.name; select.appendChild(opt);
       });
     }
+    var addNewOpt = document.createElement('option'); addNewOpt.value = '__new__'; addNewOpt.textContent = '+ إضافة مساق جديد...';
+    select.appendChild(addNewOpt);
+    if(courses.some(function(c){ return c.id === current; })) select.value = current;
 
-    // حفظ المهمة (سواء كانت جديدة أو تعديل لمهمة موجودة)
-    function saveNote(e) {
-      e.preventDefault();
-      
-      const title = document.getElementById('noteTitle').value;
-      const course = document.getElementById('courseTitle').value;
-      const type = document.getElementById('noteType').value;
-      const date = document.getElementById('dueDate').value;
-      const desc = document.getElementById('noteDesc').value;
+    // toolbar course filter select
+    var filterSelect = document.getElementById('courseFilterSelect');
+    var currentFilter = filterSelect.value;
+    filterSelect.innerHTML = '<option value="">كل المساقات</option>';
+    courses.forEach(function(c){
+      var opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.name; filterSelect.appendChild(opt);
+    });
+    if(courses.some(function(c){ return c.id === currentFilter; })) filterSelect.value = currentFilter;
+  }
 
-      if (editingNoteId !== null) {
-        // حالة التعديل
-        notes = notes.map(n => {
-          if (n.id === editingNoteId) {
-            return { ...n, title, course, type, date, desc };
-          }
-          return n;
+  document.getElementById('addCourseBtn').addEventListener('click', function(){
+    var input = document.getElementById('courseInput');
+    var name = input.value.trim();
+    if(!name || courses.some(function(c){ return c.name === name; })){ input.value=''; return; }
+    courses.push({ id: uid(), name: name });
+    persistCourses(); input.value = ''; renderCourses();
+  });
+  document.getElementById('courseInput').addEventListener('keydown', function(e){ if(e.key === 'Enter') document.getElementById('addCourseBtn').click(); });
+
+  document.getElementById('courseList').addEventListener('click', function(e){
+    var btn = e.target.closest('.rm');
+    if(!btn) return;
+    var id = btn.getAttribute('data-id');
+    var name = courseName(id);
+    sketchConfirm('حذف مساق "' + name + '"؟', 'المهام المرتبطة به ستبقى لكن دون مساق صالح.').then(function(ok){
+      if(!ok) return;
+      courses = courses.filter(function(c){ return c.id !== id; });
+      persistCourses(); renderCourses(); renderNotes();
+    });
+  });
+
+  document.getElementById('courseSelect').addEventListener('change', function(){
+    document.getElementById('quickAddCourseRow').style.display = this.value === '__new__' ? 'flex' : 'none';
+  });
+  document.getElementById('quickAddCourseBtn').addEventListener('click', function(){
+    var input = document.getElementById('quickCourseInput');
+    var name = input.value.trim();
+    if(!name) return;
+    var existing = courses.find(function(c){ return c.name === name; });
+    var courseObj = existing || { id: uid(), name: name };
+    if(!existing){ courses.push(courseObj); persistCourses(); }
+    renderCourses();
+    document.getElementById('courseSelect').value = courseObj.id;
+    document.getElementById('quickAddCourseRow').style.display = 'none';
+    input.value = '';
+  });
+
+  document.getElementById('courseFilterSelect').addEventListener('change', function(){ courseFilterId = this.value; renderNotes(); });
+
+  // ================= SEARCH & SORT =================
+  document.getElementById('searchInput').addEventListener('input', function(){ searchQuery = this.value.trim().toLowerCase(); renderNotes(); });
+  document.getElementById('sortSelect').addEventListener('change', function(){ sortMode = this.value; renderNotes(); });
+
+  // ================= SETTINGS MODAL =================
+  var settingsOverlay = document.getElementById('settingsOverlay');
+  document.getElementById('openSettingsBtn').addEventListener('click', function(){
+    document.getElementById('usernameInput').value = settings.username;
+    document.getElementById('notifyCheckbox').checked = settings.notificationsEnabled;
+    document.getElementById('soundCheckbox').checked = settings.soundEnabled;
+    settingsOverlay.classList.add('active');
+  });
+  document.getElementById('cancelSettingsBtn').addEventListener('click', function(){ settingsOverlay.classList.remove('active'); });
+
+  document.getElementById('notifyCheckbox').addEventListener('change', function(){
+    var box = this;
+    if(box.checked){
+      if(!('Notification' in window)){ box.checked = false; alert('التنبيهات غير مدعومة في هذا المتصفح.'); return; }
+      try{
+        Notification.requestPermission().then(function(perm){
+          if(perm !== 'granted'){ box.checked = false; }
         });
-      } else {
-        // حالة إضافة جديد
-        const newNote = {
-          id: Date.now(),
-          title,
-          course,
-          type,
-          date,
-          desc,
-          completed: false
-        };
-        notes.unshift(newNote);
+      }catch(e){ box.checked = false; }
+    }
+  });
+
+  document.getElementById('saveSettingsBtn').addEventListener('click', function(){
+    settings.username = document.getElementById('usernameInput').value.trim();
+    settings.notificationsEnabled = document.getElementById('notifyCheckbox').checked;
+    settings.soundEnabled = document.getElementById('soundCheckbox').checked;
+    persistSettings();
+    renderWelcome();
+    settingsOverlay.classList.remove('active');
+  });
+
+  // ---------- export / import ----------
+  var downloadsApi = null;
+  (function initDownloads(){
+    try{
+      if(window.claude && typeof window.claude.use === 'function'){
+        window.claude.use('downloads').then(function(api){
+          downloadsApi = api;
+          document.getElementById('exportBtn').style.display = api ? '' : 'none';
+        }).catch(function(){ downloadsApi = null; });
       }
+    }catch(e){ /* no host bridge */ }
+  })();
 
-      saveToLocalStorage();
-      renderNotes();
-      closeModal();
+  document.getElementById('exportBtn').addEventListener('click', function(){
+    if(!downloadsApi) return;
+    var payload = { exportedAt: new Date().toISOString(), settings: { username: settings.username }, courses: courses, notes: notes };
+    var json = JSON.stringify(payload, null, 2);
+    downloadsApi.save({ filename: 'مهامي-نسخة-احتياطية.json', data: json }).catch(function(){ /* declined or unavailable */ });
+  });
+
+  document.getElementById('importBtn').addEventListener('click', function(){ document.getElementById('importInput').click(); });
+  document.getElementById('importInput').addEventListener('change', function(e){
+    var file = e.target.files && e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      var parsed;
+      try{ parsed = JSON.parse(reader.result); }catch(err){ alert('الملف غير صالح.'); return; }
+      if(!parsed || !Array.isArray(parsed.notes) || !Array.isArray(parsed.courses)){ alert('صيغة الملف غير متوقعة.'); return; }
+      sketchConfirm('استيراد النسخة الاحتياطية؟', 'سيستبدل هذا كل المساقات والمهام الحالية.').then(function(ok){
+        if(!ok) return;
+        courses = parsed.courses;
+        notes = parsed.notes.map(function(n){ return Object.assign({ recurring:false, completedAt:null }, n); });
+        if(parsed.settings && typeof parsed.settings.username === 'string') settings.username = parsed.settings.username;
+        manualOrder = notes.map(function(n){ return n.id; });
+        persistCourses(); persistNotes(); persistSettings(); persistOrder();
+        renderWelcome(); renderCourses(); renderNotes(); renderStats();
+      });
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  // ================= CUSTOM CONFIRM =================
+  var confirmOverlay = document.getElementById('confirmOverlay');
+  var confirmResolver = null;
+  function sketchConfirm(title, message){
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMsg').textContent = message || '';
+    confirmOverlay.classList.add('active');
+    return new Promise(function(resolve){ confirmResolver = resolve; });
+  }
+  document.getElementById('confirmOkBtn').addEventListener('click', function(){
+    confirmOverlay.classList.remove('active');
+    if(confirmResolver) confirmResolver(true);
+    confirmResolver = null;
+  });
+  document.getElementById('confirmCancelBtn').addEventListener('click', function(){
+    confirmOverlay.classList.remove('active');
+    if(confirmResolver) confirmResolver(false);
+    confirmResolver = null;
+  });
+
+  // ================= SOUND =================
+  var audioCtx = null;
+  function playPinSound(){
+    if(!settings.soundEnabled) return;
+    try{
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      var t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(740, t);
+      osc.frequency.exponentialRampToValueAtTime(300, t + 0.12);
+      gain.gain.setValueAtTime(0.001, t);
+      gain.gain.exponentialRampToValueAtTime(0.18, t + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(t); osc.stop(t + 0.16);
+    }catch(e){ /* audio unavailable */ }
+  }
+
+  // ================= REMINDERS =================
+  function checkReminders(){
+    var tomorrow = addDaysISO(todayISO(), 1);
+    var due = notes.filter(function(n){ return !n.completed && n.date === tomorrow; });
+    if(due.length === 0) return;
+
+    var banner = document.getElementById('reminderBanner');
+    var list = document.getElementById('reminderList');
+    document.getElementById('reminderTitle').textContent = '🔔 لديك ' + due.length + ' مهمة مستحقة غدًا';
+    list.innerHTML = due.map(function(n){ return '<li>• ' + escapeHtml(n.title) + ' (' + escapeHtml(courseName(n.courseId)) + ')</li>'; }).join('');
+    banner.style.display = 'flex';
+
+    if(settings.notificationsEnabled && ('Notification' in window) && Notification.permission === 'granted'){
+      due.forEach(function(n){
+        if(remindedIds.indexOf(n.id) !== -1) return;
+        try{ new Notification('تذكير بمهمة غدًا 📌', { body: n.title + ' — ' + courseName(n.courseId) }); }catch(e){}
+        remindedIds.push(n.id);
+      });
+      persistReminded();
     }
+  }
+  document.getElementById('reminderCloseBtn').addEventListener('click', function(){ document.getElementById('reminderBanner').style.display = 'none'; });
 
-    function toggleComplete(id) {
-      notes = notes.map(n => n.id === id ? { ...n, completed: !n.completed } : n);
-      saveToLocalStorage();
-      renderNotes();
-    }
-
-    function deleteNote(id) {
-      if (confirm('هل تريد إزالة هذه الورقة من السبورة؟')) {
-        notes = notes.filter(n => n.id !== id);
-        saveToLocalStorage();
-        renderNotes();
-      }
-    }
-
-    function filterNotes(filter, event) {
-      currentFilter = filter;
-      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      renderNotes();
-    }
-
-    function getTypeName(type) {
-      switch (type) {
-        case 'assignment': return 'واجب';
-        case 'exam': return 'امتحان';
-        case 'task': return 'مهمة';
-        default: return 'الكل';
-      }
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.innerText = text;
-      return div.innerHTML;
-    }
-
-    // فتح النافذة المنبثقة (للإضافة أو للتعديل)
-    function openModal(id = null) {
-      const modal = document.getElementById('modalOverlay');
-      const modalTitle = document.getElementById('modalTitle');
-      const submitBtn = document.getElementById('submitBtn');
-      const form = document.getElementById('noteForm');
-
-      if (id !== null) {
-        // تجهيز النافذة للتعديل
-        editingNoteId = id;
-        const noteToEdit = notes.find(n => n.id === id);
-        
-        if (noteToEdit) {
-          document.getElementById('noteTitle').value = noteToEdit.title;
-          document.getElementById('courseTitle').value = noteToEdit.course;
-          document.getElementById('noteType').value = noteToEdit.type;
-          document.getElementById('dueDate').value = noteToEdit.date;
-          document.getElementById('noteDesc').value = noteToEdit.desc || '';
-          
-          modalTitle.innerText = 'تعديل ورقة المهمة ✏️';
-          submitBtn.innerText = 'حفظ التعديلات 💾';
-        }
-      } else {
-        // تجهيز النافذة للإضافة الجديدة
-        editingNoteId = null;
-        form.reset();
-        modalTitle.innerText = 'تعليق ورقة جديدة على السبورة';
-        submitBtn.innerText = 'تثبيت بالدبوس 📌';
-      }
-
-      modal.classList.add('active');
-    }
-
-    function closeModal() {
-      document.getElementById('modalOverlay').classList.remove('active');
-      document.getElementById('noteForm').reset();
-      editingNoteId = null;
-    }
-
-    // التشغيل عند الفتح
-    initDarkMode();
-    displayRandomTip();
+  // ================= TABS & FILTERS =================
+  document.getElementById('tabActiveBtn').addEventListener('click', function(){ setTab('active'); });
+  document.getElementById('tabDoneBtn').addEventListener('click', function(){ setTab('done'); });
+  function setTab(tab){
+    currentTab = tab;
+    document.getElementById('tabActiveBtn').classList.toggle('active', tab === 'active');
+    document.getElementById('tabDoneBtn').classList.toggle('active', tab === 'done');
+    document.getElementById('typeFilters').style.display = tab === 'active' ? 'flex' : 'none';
+    document.getElementById('addNoteBtn').style.display = tab === 'active' ? '' : 'none';
     renderNotes();
-  </script>
+  }
+  document.getElementById('typeFilters').addEventListener('click', function(e){
+    var btn = e.target.closest('button[data-type]');
+    if(!btn) return;
+    currentTypeFilter = btn.getAttribute('data-type');
+    document.querySelectorAll('#typeFilters .sketch-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    renderNotes();
+  });
 
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/Sabbora/service-worker.js')
-        .then(reg => console.log('Service Worker Registered!'))
-        .catch(err => console.log('Service Worker Failed:', err));
+  // ================= BOARD RENDER =================
+  function renderNotes(){
+    var grid = document.getElementById('boardGrid');
+    grid.innerHTML = '';
+
+    var pool = notes.filter(function(n){ return currentTab === 'active' ? !n.completed : n.completed; });
+    if(currentTab === 'active' && currentTypeFilter !== 'all') pool = pool.filter(function(n){ return n.type === currentTypeFilter; });
+    if(courseFilterId) pool = pool.filter(function(n){ return n.courseId === courseFilterId; });
+    if(searchQuery) pool = pool.filter(function(n){ return (n.title || '').toLowerCase().indexOf(searchQuery) !== -1; });
+
+    pool = pool.slice().sort(function(a,b){
+      if(currentTab === 'done') return (b.completedAt || 0) - (a.completedAt || 0);
+      if(sortMode === 'date') return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0);
+      if(sortMode === 'course') {
+        var ca = courseName(a.courseId), cb = courseName(b.courseId);
+        if(ca !== cb) return ca < cb ? -1 : 1;
+        return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0);
+      }
+      // manual
+      return manualOrder.indexOf(a.id) - manualOrder.indexOf(b.id);
+    });
+
+    document.getElementById('activeCount').textContent = notes.filter(function(n){ return !n.completed; }).length;
+    document.getElementById('doneCount').textContent = notes.filter(function(n){ return n.completed; }).length;
+    renderStats();
+
+    if(pool.length === 0){
+      grid.innerHTML = currentTab === 'active'
+        ? '<div class="empty-state"><div>🧼</div><h3 class="hand">السبورة نظيفة تماماً!</h3><p>لا توجد مهام مطابقة لبحثك أو تصفيتك الحالية.</p></div>'
+        : '<div class="empty-state"><div>🌱</div><h3 class="hand">لا مهام منجزة بعد</h3><p>أول إنجاز لك سيظهر هنا.</p></div>';
+      return;
+    }
+
+    var draggable = (currentTab === 'active' && sortMode === 'manual' && !searchQuery && !courseFilterId && currentTypeFilter === 'all');
+
+    pool.forEach(function(note){
+      var paper = document.createElement('div');
+      paper.className = 'paper-note ' + note.type + (note.completed ? ' completed' : '');
+      paper.setAttribute('data-id', note.id);
+      if(draggable) paper.setAttribute('draggable', 'true');
+
+      var diff = diffDaysFromToday(note.date);
+      var dueClass = '', dueIcon = '📅';
+      if(!note.completed){
+        if(diff < 0){ dueClass = 'due-overdue'; dueIcon = '⏰'; }
+        else if(diff <= 2){ dueClass = 'due-warn'; dueIcon = '⚠️'; }
+      }
+
+      paper.innerHTML =
+        '<div class="pin"></div>' +
+        '<div class="completed-stamp hand">تم الإنجاز</div>' +
+        '<div>' +
+          '<div class="note-header">' +
+            '<span class="course-title">' + escapeHtml(courseName(note.courseId)) + '</span>' +
+            '<span class="badge">' + getTypeName(note.type) + '</span>' +
+          '</div>' +
+          '<div class="note-title">' + escapeHtml(note.title) + (note.recurring ? ' <span class="recur-icon" title="مهمة متكررة أسبوعيًا">🔁</span>' : '') + '</div>' +
+          '<div class="note-desc">' + escapeHtml(note.desc || 'لا توجد ملاحظات.') + '</div>' +
+        '</div>' +
+        '<div class="note-footer">' +
+          '<span class="due-date ' + dueClass + '">' + dueIcon + ' ' + escapeHtml(note.date) + '</span>' +
+          '<div class="actions">' +
+            '<button class="action-btn" data-action="toggle" title="' + (note.completed ? 'استرجاع' : 'تحديد كمُنجز') + '">' + (note.completed ? '↩️' : '✅') + '</button>' +
+            (note.completed ? '' : '<button class="action-btn" data-action="edit" title="تعديل المهمة">✏️</button>') +
+            '<button class="action-btn" data-action="delete" title="حذف الورقة">🗑️</button>' +
+          '</div>' +
+        '</div>';
+      grid.appendChild(paper);
     });
   }
+
+  document.getElementById('boardGrid').addEventListener('click', function(e){
+    var actionBtn = e.target.closest('.action-btn');
+    if(!actionBtn) return;
+    var card = e.target.closest('.paper-note');
+    var id = card.getAttribute('data-id');
+    var note = notes.find(function(n){ return n.id === id; });
+    if(!note) return;
+    var action = actionBtn.getAttribute('data-action');
+
+    if(action === 'toggle'){
+      note.completed = !note.completed;
+      note.completedAt = note.completed ? Date.now() : null;
+
+      if(note.completed && note.recurring){
+        var nextDate = addDaysISO(note.date, 7);
+        var clone = { id: uid(), title: note.title, courseId: note.courseId, type: note.type, date: nextDate, desc: note.desc, completed:false, completedAt:null, recurring:true };
+        notes.push(clone);
+        manualOrder.push(clone.id);
+        persistOrder();
+      }
+      persistNotes();
+      card.style.transition = 'opacity .3s ease, transform .3s ease';
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(-8px) scale(.96)';
+      setTimeout(renderNotes, 220);
+    }else if(action === 'edit'){
+      openModal(id);
+    }else if(action === 'delete'){
+      sketchConfirm('حذف هذه الورقة؟', 'لا يمكن التراجع عن هذا الإجراء.').then(function(ok){
+        if(!ok) return;
+        notes = notes.filter(function(n){ return n.id !== id; });
+        manualOrder = manualOrder.filter(function(mid){ return mid !== id; });
+        persistNotes(); persistOrder(); renderNotes();
+      });
+    }
+  });
+
+  // ---------- drag & drop manual priority ----------
+  var grid = document.getElementById('boardGrid');
+  grid.addEventListener('dragstart', function(e){
+    var card = e.target.closest('.paper-note[draggable="true"]');
+    if(!card) return;
+    draggedId = card.getAttribute('data-id');
+    card.classList.add('dragging');
+    try{ e.dataTransfer.setData('text/plain', draggedId); }catch(err){}
+  });
+  grid.addEventListener('dragend', function(e){
+    var card = e.target.closest('.paper-note');
+    if(card) card.classList.remove('dragging');
+    draggedId = null;
+  });
+  grid.addEventListener('dragover', function(e){ e.preventDefault(); });
+  grid.addEventListener('drop', function(e){
+    e.preventDefault();
+    if(!draggedId) return;
+    var targetCard = e.target.closest('.paper-note');
+    var targetId = targetCard ? targetCard.getAttribute('data-id') : null;
+    if(!targetId || targetId === draggedId) return;
+
+    var fromIdx = manualOrder.indexOf(draggedId);
+    var toIdx = manualOrder.indexOf(targetId);
+    if(fromIdx === -1 || toIdx === -1) return;
+    manualOrder.splice(fromIdx, 1);
+    toIdx = manualOrder.indexOf(targetId);
+    manualOrder.splice(toIdx, 0, draggedId);
+    persistOrder();
+    renderNotes();
+  });
+
+  // ================= ADD / EDIT MODAL =================
+  var modalOverlay = document.getElementById('modalOverlay');
+  window.openModal = function(id){
+    editingNoteId = (typeof id === 'string') ? id : null;
+    var modalTitle = document.getElementById('modalTitle');
+    var submitBtn = document.getElementById('submitBtn');
+    renderCourses();
+    document.getElementById('quickAddCourseRow').style.display = 'none';
+
+    if(editingNoteId !== null){
+      var n = notes.find(function(x){ return x.id === editingNoteId; });
+      if(n){
+        document.getElementById('noteTitle').value = n.title;
+        document.getElementById('courseSelect').value = n.courseId;
+        document.getElementById('noteType').value = n.type;
+        document.getElementById('dueDate').value = n.date;
+        document.getElementById('noteDesc').value = n.desc || '';
+        document.getElementById('recurCheckbox').checked = !!n.recurring;
+        modalTitle.textContent = 'تعديل ورقة المهمة ✏️';
+        submitBtn.textContent = 'حفظ التعديلات 💾';
+      }
+    }else{
+      document.getElementById('noteForm').reset();
+      renderCourses();
+      modalTitle.textContent = 'تعليق ورقة جديدة على السبورة';
+      submitBtn.textContent = 'تثبيت بالدبوس 📌';
+    }
+    modalOverlay.classList.add('active');
+  };
+  function closeModal(){
+    modalOverlay.classList.remove('active');
+    document.getElementById('noteForm').reset();
+    document.getElementById('quickAddCourseRow').style.display = 'none';
+    editingNoteId = null;
+  }
+  document.getElementById('addNoteBtn').addEventListener('click', function(){ openModal(null); });
+  document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
+
+  document.getElementById('noteForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var courseVal = document.getElementById('courseSelect').value;
+    if(courseVal === '__new__' || !courseVal){ document.getElementById('quickCourseInput').focus(); return; }
+    var title = document.getElementById('noteTitle').value.trim();
+    var type = document.getElementById('noteType').value;
+    var date = document.getElementById('dueDate').value;
+    var desc = document.getElementById('noteDesc').value.trim();
+    var recurring = document.getElementById('recurCheckbox').checked;
+    if(!title || !date) return;
+
+    if(editingNoteId !== null){
+      notes = notes.map(function(n){
+        return n.id === editingNoteId ? Object.assign({}, n, { title:title, courseId:courseVal, type:type, date:date, desc:desc, recurring:recurring }) : n;
+      });
+    }else{
+      var newNote = { id: uid(), title:title, courseId:courseVal, type:type, date:date, desc:desc, completed:false, completedAt:null, recurring:recurring };
+      notes.unshift(newNote);
+      manualOrder.unshift(newNote.id);
+      persistOrder();
+      playPinSound();
+    }
+    persistNotes();
+    closeModal();
+    setTab('active');
+  });
+
+  // ================= KEYBOARD SHORTCUTS =================
+  document.addEventListener('keydown', function(e){
+    var anyOverlayOpen = modalOverlay.classList.contains('active') || settingsOverlay.classList.contains('active') || confirmOverlay.classList.contains('active');
+    if(e.key === 'Escape'){
+      if(modalOverlay.classList.contains('active')) closeModal();
+      if(settingsOverlay.classList.contains('active')) settingsOverlay.classList.remove('active');
+      if(confirmOverlay.classList.contains('active')){ confirmOverlay.classList.remove('active'); if(confirmResolver){ confirmResolver(false); confirmResolver = null; } }
+      return;
+    }
+    if(e.key === 'Enter' && !anyOverlayOpen){
+      var tag = (document.activeElement && document.activeElement.tagName || '').toLowerCase();
+      if(tag === 'input' || tag === 'textarea' || tag === 'select') return;
+      if(currentTab === 'active'){ openModal(null); }
+    }
+  });
+
+  // ================= INIT =================
+  initDarkMode();
+  displayRandomTip();
+  renderWelcome();
+  renderCourses();
+  renderNotes();
+  checkReminders();
+})();
 </script>
-  
 </body>
 </html>
