@@ -1,46 +1,44 @@
-const CACHE_NAME = 'sabbora-cache-v5';
+/* رزنامة — Service Worker: عمل دون اتصال + تحديث تلقائي */
+const CACHE_NAME = 'ruznameh-cache-v1';
+
 const ASSETS_TO_CACHE = [
-  '/Sabbora/',
-  '/Sabbora/index.html',
-  '/Sabbora/manifest.json',
-  '/Sabbora/icon-192.png',
-  '/Sabbora/icon-512.jpeg'
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return Promise.allSettled(
-        ASSETS_TO_CACHE.map((url) =>
-          cache.add(url).catch((err) => console.log('Failed to cache:', url, err))
-        )
-      );
-    })
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.allSettled(ASSETS_TO_CACHE.map((url) => cache.add(url)))
+    ).then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
+    caches.keys().then((keys) =>
+      Promise.all(keys.map((key) => (key !== CACHE_NAME ? caches.delete(key) : undefined)))
+    ).then(() => self.clients.claim())
   );
 });
 
+/* شبكة أولًا مع رجوع للكاش، وتحديث الكاش في الخلفية */
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).catch(() => {});
-    })
+    fetch(event.request)
+      .then((response) => {
+        if (response && response.ok && (event.request.url.startsWith(self.location.origin) || event.request.url.includes('fonts.g'))) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return response;
+      })
+      .catch(() =>
+        caches.match(event.request).then((cached) => cached || caches.match('./index.html'))
+      )
   );
 });
