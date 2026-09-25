@@ -1,1129 +1,1400 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <link rel="manifest" href="manifest.json">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>سبورة مهام الطالب الجامعي</title>
+<meta name="theme-color" content="#efe2c6">
+<title>رزنامة — دفتر مهامك الجامعي</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rakkas&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Amiri:ital@0;1&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg-body: #ece0c8;
-    --bg-header: #f4e9d4;
-    --bg-board: #ede0c4;
-    --board-dots: #c9b48f;
-    --board-border: #6b4a28;
-    --ink: #3b2a1a;
-    --text-main: #3b2a1a;
-    --text-muted: #7a6650;
-    --tip-bg: #f3dfae;
-    --tip-border: #b98a3d;
-    --tip-text: #5c3d15;
-
-    --pin-red: #a8402a;
-    --pin-blue: #b8860b;
-    --pin-green: #4b6b43;
-
-    --paper-assignment: #e8c987;
-    --paper-exam: #d98b6b;
-    --paper-task: #a9c19a;
-    --paper-text: #3b2a1a;
-
-    --accent: #8b5e34;
-    --accent-ink: #fdf6e8;
-    --danger: #a8402a;
-    --warn: #b9791f;
-    --doodle: #a85c32;
-
-    --wood-a: #e6d3ab;
-    --wood-b: #d3b884;
+  :root{
+    --paper:#efe2c6;
+    --paper-2:#e4d1ac;
+    --card:#faf1dc;
+    --ink:#3d2b1a;
+    --ink-soft:#5c4326;
+    --muted:#8a6d47;
+    --rule:#d8c096;
+    --line:#c9ab7c;
+    --seam:rgba(112,76,38,.10);
+    --accent:#9c4a24;
+    --accent-deep:#7a3517;
+    --ochre:#a97a22;
+    --teal:#67763a;
+    --navy:#4e5a6b;
+    --red:#8e2f1c;
+    --green:#5a7247;
+    --kraft:#c9a876;
+    --tape:rgba(191,150,92,.58);
+    --shadow:#3d2b1a;
+    --overlay:rgba(45,30,15,.55);
+  }
+  body.dark{
+    --paper:#3a2b1c;
+    --paper-2:#463524;
+    --card:#52402b;
+    --ink:#f2e3c4;
+    --ink-soft:#d9c198;
+    --muted:#bfa172;
+    --rule:#665133;
+    --line:#665133;
+    --seam:rgba(20,12,5,.35);
+    --accent:#e09a58;
+    --accent-deep:#f4c795;
+    --ochre:#dfb163;
+    --teal:#b5bd72;
+    --navy:#9fb2c8;
+    --red:#e0825e;
+    --green:#a9c189;
+    --kraft:#8a6b42;
+    --tape:rgba(180,140,88,.45);
+    --shadow:#241708;
+    --overlay:rgba(24,15,7,.6);
   }
 
-  body.dark-mode {
-    --bg-body: #241a10;
-    --bg-header: #2f2318;
-    --bg-board: #2a1f14;
-    --board-dots: rgba(230,211,171,0.18);
-    --board-border: #4a3216;
-    --ink: #ecdfc4;
-    --text-main: #f3e8d2;
-    --text-muted: #c2ad88;
-    --tip-bg: #3a2c18;
-    --tip-border: #8a6a2f;
-    --tip-text: #f0dca0;
-
-    --paper-assignment: #d9b972;
-    --paper-exam: #c17953;
-    --paper-task: #7fa06f;
-    --paper-text: #241a10;
-
-    --accent: #c1893f;
-    --warn: #e0a238;
-
-    --wood-a: #3a2c1c;
-    --wood-b: #2c2115;
-  }
-
-  *{ box-sizing:border-box; margin:0; padding:0; font-family:'Tajawal',sans-serif; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
   body{
-    background:
-      repeating-linear-gradient(90deg, var(--wood-a) 0px, var(--wood-a) 34px, var(--wood-b) 34px, var(--wood-b) 68px),
-      var(--bg-body);
-    background-blend-mode:multiply;
-    color:var(--text-main);
+    font-family:'IBM Plex Sans Arabic',sans-serif;
+    color:var(--ink);
     min-height:100vh;
-    padding:18px;
-    transition:background-color .3s ease, color .3s ease;
+    background-color:var(--paper);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E"),
+      repeating-linear-gradient(90deg, transparent 0 46px, rgba(255,255,255,.05) 46px 48px, transparent 48px 118px, var(--seam) 118px 120px),
+      repeating-linear-gradient(0deg, transparent 0 6px, rgba(112,76,38,.035) 6px 7px);
+    padding:22px 20px 60px;
+    transition:background-color .35s ease, color .35s ease;
   }
-  .hand{ font-family:'Rakkas','Tajawal',serif; font-weight:400; }
+  .hand{ font-family:'Aref Ruqaa',serif; }
+  .serif{ font-family:'Amiri',serif; }
   :focus-visible{ outline:3px solid var(--accent); outline-offset:2px; }
-
-  .shell{
-    max-width:1320px;
-    margin:0 auto;
-    display:grid;
-    grid-template-columns:270px 1fr;
-    gap:20px;
-    align-items:start;
-  }
-  @media (max-width:880px){ .shell{ grid-template-columns:1fr; } }
-
-  /* ---------- hand-drawn sketch box ---------- */
-  .sketch{
-    position:relative;
-    z-index:0;
-    border:2.3px solid var(--ink);
-    background:var(--bg-header);
-    box-shadow:5px 5px 0 var(--ink);
-  }
-  .sketch::before{
-    content:'';
-    position:absolute; inset:-6px;
-    border:2px solid var(--ink);
-    opacity:.28;
-    transform:rotate(-.7deg);
-    pointer-events:none; z-index:-1;
-  }
-
-  .sketch-btn{
-    font-family:'Tajawal',sans-serif;
-    font-weight:700;
-    font-size:.85rem;
-    background-image:repeating-linear-gradient(90deg, var(--wood-a) 0 8px, var(--wood-b) 8px 16px);
-    background-color:var(--bg-header);
-    color:var(--text-main);
-    border:2px solid var(--ink);
-    padding:7px 14px;
-    cursor:pointer;
-    box-shadow:3px 3px 0 var(--ink);
-    transition:transform .1s ease, box-shadow .1s ease;
-  }
-  .sketch-btn:hover{ transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink); }
-  .sketch-btn:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink); }
-  .sketch-btn.active{ background:var(--accent); color:var(--accent-ink); }
-  .sketch-btn.primary{ background:var(--accent); color:var(--accent-ink); }
-  .sketch-btn.danger{ background:var(--danger); color:#fff; }
-  .sketch-btn.small{ padding:5px 10px; font-size:.78rem; box-shadow:2px 2px 0 var(--ink); }
-  .sketch-btn:disabled{ opacity:.45; cursor:not-allowed; }
-
-  input, select, textarea{
-    font-family:'Tajawal',sans-serif;
-    font-size:.92rem;
-    background:var(--bg-body);
-    color:var(--text-main);
-    border:2px solid var(--ink);
-    padding:9px 10px;
+  ::selection{ background:var(--kraft); color:#3d2b1a; }
+  button{ font-family:inherit; cursor:pointer; }
+  input,select,textarea{
+    font-family:'IBM Plex Sans Arabic',sans-serif;
+    font-size:.9rem;
+    background:var(--paper);
+    color:var(--ink);
+    border:1.6px solid var(--ink-soft);
+    padding:9px 11px;
     width:100%;
-    outline:none;
+    outline:none; border-radius:3px;
+    transition:border-color .2s;
   }
-  label.checkline{ display:flex; align-items:center; gap:8px; font-size:.85rem; font-weight:700; cursor:pointer; }
-  label.checkline input[type="checkbox"]{ width:18px; height:18px; accent-color:var(--accent); }
+  input:focus,select:focus,textarea:focus{ border-color:var(--accent); }
+  label.checkline{ display:flex; align-items:center; gap:8px; font-size:.85rem; font-weight:600; cursor:pointer; }
+  label.checkline input{ width:17px; height:17px; accent-color:var(--accent); }
 
-  /* doodle underline for section headings */
-  .squiggle{ position:relative; display:inline-block; padding-bottom:6px; }
-  .squiggle::after{
-    content:'';
-    position:absolute; right:0; left:0; bottom:-1px; height:6px;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10'%3E%3Cpath d='M0 5 Q 8 0 16 5 T 32 5 T 48 5 T 64 5 T 80 5 T 96 5' stroke='%23e1604c' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat:repeat-x; background-size:60px 8px;
+  .shell{ max-width:1360px; margin:0 auto; display:grid; grid-template-columns:280px 1fr; gap:22px; align-items:start; }
+  @media (max-width:920px){ .shell{ grid-template-columns:1fr; } }
+
+  /* ======= أزراء بروح طباعة يدوية ======= */
+  .btn{
+    font-weight:700; font-size:.85rem;
+    background:var(--card); color:var(--ink);
+    border:1.8px solid var(--ink);
+    padding:8px 16px; border-radius:3px;
+    box-shadow:3px 3px 0 var(--shadow);
+    transition:transform .12s ease, box-shadow .12s ease, background .2s;
+    white-space:nowrap;
   }
+  .btn:hover{ transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--shadow); }
+  .btn:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 var(--shadow); }
+  .btn.primary{ background:var(--accent); color:#fff8ec; border-color:var(--accent-deep); }
+  .btn.danger{ background:var(--red); color:#fff8ec; }
+  .btn.small{ padding:5px 11px; font-size:.76rem; box-shadow:2px 2px 0 var(--shadow); }
+  .btn.ghost{ background:transparent; box-shadow:none; border-color:var(--line); color:var(--muted); }
+  .btn.active{ background:var(--ink); color:var(--paper); }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; }
 
-  /* ---------- sidebar ---------- */
+  /* ======= الترويسة ======= */
+  .masthead{
+    max-width:1360px; margin:0 auto 24px;
+    border-bottom:3px double var(--ink);
+    padding-bottom:14px;
+  }
+  .topbar{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; }
+  .topbar .tools{ display:flex; gap:8px; flex-wrap:wrap; }
+  .brand{ text-align:center; }
+  .brand h1{
+    font-family:'Aref Ruqaa',serif; font-weight:700;
+    font-size:clamp(2.6rem,6vw,4rem); line-height:1.15; letter-spacing:1px;
+  }
+  .brand h1 em{ font-style:normal; color:var(--accent); }
+  .brand .dateline{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    color:var(--muted); font-size:.88rem; font-weight:600; margin-top:2px;
+  }
+  .brand .dateline::before,.brand .dateline::after{ content:''; height:1px; width:70px; background:var(--line); }
+
+  /* ======= بطاقات عامة ======= */
+  .panel{
+    background:var(--card);
+    border:1.8px solid var(--ink);
+    border-radius:4px;
+    box-shadow:5px 5px 0 var(--shadow);
+    padding:16px 16px 18px;
+    position:relative;
+  }
+  .panel h2{
+    font-family:'Aref Ruqaa',serif; font-size:1.15rem; margin-bottom:12px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .panel h2 .hint{ font-family:'IBM Plex Sans Arabic'; font-size:.68rem; color:var(--muted); font-weight:600; margin-inline-start:auto; }
   .sidebar > * + *{ margin-top:16px; }
 
-  .welcome-note{ padding:16px 15px 18px; transform:rotate(-1deg); }
-  .welcome-note .pinhead{ position:absolute; top:-9px; right:50%; transform:translateX(50%); width:14px; height:14px; border-radius:50%; background:var(--pin-red); box-shadow:0 3px 4px rgba(0,0,0,.35); }
-  .welcome-note h1{ font-size:1.3rem; line-height:1.35; margin:4px 0 4px; }
-  .welcome-note p{ font-size:.82rem; color:var(--text-muted); margin:0 0 10px; }
+  /* بطاقة الترحيب — شكل بطاقة مستعير مكتبة */
+  .borrower{ background:var(--paper-2); overflow:hidden; }
+  body:not(.dark) .borrower{ background:#e9d8b4; }
+  .borrower::before{
+    content:''; position:absolute; inset-inline-start:0; top:0; bottom:0; width:7px;
+    background:repeating-linear-gradient(to bottom, var(--accent) 0 14px, var(--paper-2) 14px 20px);
+  }
+  .borrower h1{ font-size:1.25rem; margin-bottom:2px; }
+  .borrower .uni{ font-size:.8rem; color:var(--muted); margin-bottom:12px; }
+  .borrower .barcode{
+    height:26px; margin:10px 0;
+    background:repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 5px, var(--ink) 5px 6px, transparent 6px 11px, var(--ink) 11px 14px, transparent 14px 17px);
+    opacity:.75;
+  }
 
-  .sidebar-card{ padding:14px 15px 16px; }
-  .sidebar-card h2{ font-size:1.05rem; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+  /* ======= الإحصاءات ======= */
+  .stats-flex{ display:flex; align-items:center; gap:16px; }
+  .ring{ position:relative; width:96px; height:96px; flex-shrink:0; }
+  .ring svg{ transform:rotate(-90deg); }
+  .ring .track{ stroke:var(--line); }
+  .ring .fill{ stroke:var(--accent); transition:stroke-dashoffset .6s ease; }
+  .ring .pct{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:1.05rem;
+  }
+  .stat-rows{ flex:1; display:flex; flex-direction:column; gap:6px; font-size:.83rem; }
+  .stat-rows .row{ display:flex; justify-content:space-between; border-bottom:1px dashed var(--line); padding-bottom:5px; }
+  .stat-rows .row b{ font-weight:700; }
+  .dot{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-inline-end:6px; vertical-align:1px; }
 
-  .stats-row{ display:flex; justify-content:space-between; font-size:.85rem; font-weight:700; margin-bottom:6px; }
-  .progress-track{ border:2px solid var(--ink); height:14px; background:var(--bg-body); margin-bottom:12px; position:relative; }
-  .progress-fill{ height:100%; background:var(--accent); transition:width .4s ease; }
-  .stat-line{ font-size:.83rem; color:var(--text-muted); margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+  .streak-line{
+    display:flex; align-items:center; gap:8px; margin-top:12px;
+    background:var(--paper-2); border:1.6px dashed var(--line); border-radius:4px;
+    padding:8px 12px; font-size:.85rem; font-weight:600;
+  }
+  .streak-line .flame{ font-size:1.15rem; }
 
+  /* ======= المساقات ======= */
   .course-list{ list-style:none; display:flex; flex-direction:column; gap:7px; margin-bottom:10px; }
-  .course-chip{ display:flex; align-items:center; justify-content:space-between; gap:6px; padding:6px 9px; font-size:.83rem; font-weight:700; border:2px solid var(--ink); background:var(--paper-task); color:var(--paper-text); }
-  .course-chip:nth-child(3n+2){ background:var(--paper-assignment); }
-  .course-chip:nth-child(3n+3){ background:var(--paper-exam); }
-  .course-chip .rm{ background:none; border:none; cursor:pointer; color:inherit; opacity:.6; font-size:.9rem; font-family:'Tajawal',sans-serif; }
+  .course-chip{
+    display:flex; align-items:center; justify-content:space-between; gap:6px;
+    padding:6px 10px; font-size:.82rem; font-weight:700;
+    border:1.6px solid var(--ink); border-radius:3px; cursor:pointer;
+    background:var(--paper-2); transition:transform .15s;
+  }
+  .course-chip:hover{ transform:translateX(-3px); }
+  .course-chip.sel{ background:var(--ink); color:var(--paper); }
+  .course-chip .rm{ background:none; border:none; color:inherit; opacity:.55; font-size:.85rem; }
   .course-chip .rm:hover{ opacity:1; }
   .add-row{ display:flex; gap:6px; }
-  .add-row input{ flex:1; }
-  .muted-note{ font-size:.8rem; color:var(--text-muted); margin-bottom:8px; }
 
-  /* ---------- header ---------- */
-  header.sketch{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; padding:14px 18px; margin-bottom:18px; background-image:repeating-linear-gradient(90deg, var(--wood-a) 0 20px, var(--wood-b) 20px 40px); }
-  .logo-zone h1{ font-size:1.35rem; display:flex; align-items:center; gap:8px; }
-  .logo-zone span{ background:var(--accent); color:#fff; font-size:.72rem; padding:3px 8px; border:2px solid var(--ink); font-family:'Tajawal'; font-weight:700; }
-  .controls{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  /* نصيحة */
+  .tip-card{ background:var(--paper-2); }
+  .tip-card .quote{ font-family:'Amiri',serif; font-size:1.05rem; line-height:1.8; min-height:64px; }
+  .tip-card .quote::before{ content:'❝ '; color:var(--accent); }
+  .tip-card .quote::after{ content:' ❞'; color:var(--accent); }
+  .tip-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+  .tip-foot span{ font-size:.72rem; color:var(--muted); font-weight:600; }
+  .refresh-tip{ background:none; border:none; font-size:1.05rem; opacity:.7; }
+  .refresh-tip:hover{ opacity:1; }
 
-  /* ---------- tip & reminder banners ---------- */
-  .tip-banner.sketch{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 16px; margin-bottom:14px; background:var(--tip-bg); color:var(--tip-text); font-size:.92rem; font-weight:600; }
-  .tip-content{ display:flex; align-items:center; gap:9px; }
-  .refresh-tip-btn{ background:none; border:none; cursor:pointer; font-size:1.05rem; color:inherit; }
-
-  .reminder-banner.sketch{
-    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-    padding:11px 16px; margin-bottom:14px; background:var(--paper-exam); color:var(--paper-text);
-    font-size:.88rem; font-weight:600;
-  }
-  .reminder-banner ul{ list-style:none; margin-top:4px; display:flex; flex-direction:column; gap:2px; }
-  .reminder-close{ background:none; border:none; cursor:pointer; font-size:1rem; color:inherit; opacity:.7; }
-  .reminder-close:hover{ opacity:1; }
-
-  /* ---------- toolbar ---------- */
-  .toolbar.sketch{ display:flex; gap:10px; flex-wrap:wrap; padding:12px 16px; margin-bottom:14px; align-items:center; }
-  .toolbar input[type="search"]{ flex:1 1 220px; }
+  /* ======= شريط الأدوات ======= */
+  .toolbar{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+  .toolbar input[type="search"]{ flex:1 1 210px; }
   .toolbar select{ flex:0 0 auto; width:auto; min-width:150px; }
+  .view-toggle{ display:flex; gap:0; border:1.8px solid var(--ink); border-radius:3px; overflow:hidden; }
+  .view-toggle .btn{ border:none; box-shadow:none; border-radius:0; }
+  .view-toggle .btn + .btn{ border-inline-start:1.8px solid var(--ink); }
 
-  /* ---------- tabs ---------- */
-  .tabs{ display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
-  .tab-btn.sketch-btn{ font-family:'Rakkas',serif; font-size:1.02rem; padding:8px 18px; }
-  .tab-btn .count{ font-family:'Tajawal'; font-size:.68rem; font-weight:800; background:var(--ink); color:var(--bg-header); padding:1px 6px; margin-inline-start:6px; }
-  .type-filters{ display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+  /* تبويبات + مرشحات */
+  .tabs{ display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; align-items:center; }
+  .tab-btn{ font-family:'Aref Ruqaa',serif; font-size:1.02rem; padding:7px 18px; }
+  .tab-btn .count{ font-family:'IBM Plex Sans Arabic'; font-size:.7rem; font-weight:700; background:var(--accent); color:#fff8ec; padding:1px 7px; border-radius:20px; margin-inline-start:6px; }
+  .type-filters{ display:flex; gap:7px; margin-bottom:16px; flex-wrap:wrap; }
 
-  /* ---------- whiteboard ---------- */
-  .whiteboard-frame{
-    width:100%; min-height:60vh;
-    background-color:var(--bg-board);
-    background-image:radial-gradient(var(--board-dots) 1.5px, transparent 1.5px);
-    background-size:24px 24px;
-    border:11px solid var(--board-border);
-    box-shadow:inset 0 0 15px rgba(0,0,0,.2), 6px 6px 0 var(--ink);
-    padding:24px; position:relative;
-  }
-  .board-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:22px 20px; }
+  /* ======= لوحة البطاقات (بطاقات فهرس مكتبية) ======= */
+  .board{ display:grid; grid-template-columns:repeat(auto-fill, minmax(265px,1fr)); gap:24px 20px; padding-top:8px; }
 
-  .paper-note{
+  .task-card{
     position:relative;
-    padding:20px 15px 15px;
-    border:2px solid var(--ink);
-    box-shadow:4px 5px 0 rgba(0,0,0,.28);
+    background:var(--card);
+    background-image:repeating-linear-gradient(to bottom, transparent 0 26px, var(--rule) 26px 27px);
+    border:1.8px solid var(--ink);
+    border-inline-start-width:7px;
+    border-radius:3px;
+    box-shadow:4px 5px 0 rgba(61,43,26,.25);
+    padding:26px 15px 13px;
+    min-height:210px;
+    display:flex; flex-direction:column;
     transition:transform .2s ease, box-shadow .2s ease, opacity .3s ease;
-    display:flex; flex-direction:column; justify-content:space-between;
-    min-height:200px; word-wrap:break-word; color:var(--paper-text);
+    word-wrap:break-word;
   }
-  .paper-note:nth-child(3n+1){ transform:rotate(-1.6deg); clip-path:polygon(0% 3%,4% 0%,30% 1%,55% 0%,80% 1%,97% 0%,100% 4%,99% 30%,100% 55%,99% 80%,100% 96%,96% 100%,70% 99%,45% 100%,20% 99%,3% 100%,0% 96%,1% 70%,0% 45%,1% 20%); }
-  .paper-note:nth-child(3n+2){ transform:rotate(1.3deg); clip-path:polygon(0% 2%,20% 0%,45% 1%,70% 0%,96% 1%,100% 3%,99% 25%,100% 50%,99% 75%,100% 97%,97% 100%,75% 99%,50% 100%,25% 99%,0% 100%,1% 78%,0% 53%,1% 28%,0% 2%,0% 2%); }
-  .paper-note:nth-child(3n+3){ transform:rotate(-.7deg); clip-path:polygon(2% 0%,28% 1%,52% 0%,77% 1%,100% 0%,99% 22%,100% 47%,99% 72%,100% 100%,73% 99%,48% 100%,23% 99%,0% 100%,1% 74%,0% 49%,1% 24%,0% 0%,26% 0%,2% 0%,2% 0%); }
-  .paper-note:hover{ transform:scale(1.03) rotate(0deg) !important; z-index:10; box-shadow:6px 8px 0 rgba(0,0,0,.32); }
-  .paper-note.dragging{ opacity:.35; }
-  .paper-note[draggable="true"]{ cursor:grab; }
+  .task-card[data-type="assignment"]{ border-inline-start-color:var(--ochre); }
+  .task-card[data-type="exam"]{ border-inline-start-color:var(--red); }
+  .task-card[data-type="project"]{ border-inline-start-color:var(--teal); }
+  .task-card[data-type="task"]{ border-inline-start-color:var(--navy); }
+  .task-card::before{
+    content:''; position:absolute; top:-11px; inset-inline-start:50%; transform:translateX(50%) rotate(-2deg);
+    width:78px; height:22px; background:var(--tape);
+    box-shadow:0 2px 3px rgba(0,0,0,.15);
+    clip-path:polygon(3% 0,97% 4%,100% 30%,98% 100%,3% 96%,0 35%);
+  }
+  .task-card:hover{ transform:translateY(-4px) rotate(.4deg); box-shadow:6px 9px 0 rgba(61,43,26,.3); z-index:5; }
+  .task-card.dragging{ opacity:.3; }
+  .task-card[draggable="true"]{ cursor:grab; }
+  .task-card.leaving{ opacity:0; transform:translateY(-10px) scale(.95); }
 
-  .paper-note.assignment{ background-color:var(--paper-assignment); }
-  .paper-note.exam{ background-color:var(--paper-exam); }
-  .paper-note.task{ background-color:var(--paper-task); }
-  .paper-note.completed{ opacity:.85; }
+  .card-top{ display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:8px; padding-bottom:6px; border-bottom:1.6px dashed var(--line); }
+  .course-name{ font-size:.78rem; font-weight:700; color:var(--muted); }
+  .badges{ display:flex; gap:5px; align-items:center; }
+  .badge{ font-size:.68rem; font-weight:700; padding:2px 8px; border:1.4px solid var(--ink-soft); border-radius:20px; background:var(--paper-2); white-space:nowrap; }
+  .badge.prio-high{ background:var(--red); color:#fff8ec; border-color:var(--red); }
+  .badge.prio-low{ color:var(--muted); }
 
-  .pin{ position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:16px; height:16px; border-radius:50%; box-shadow:0 3px 5px rgba(0,0,0,.3); z-index:2; }
-  .pin::after{ content:''; position:absolute; top:3px; left:3px; width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.7); }
-  .paper-note.assignment .pin{ background:var(--pin-blue); }
-  .paper-note.exam .pin{ background:var(--pin-red); }
-  .paper-note.task .pin{ background:var(--pin-green); }
+  .task-title{ font-family:'Aref Ruqaa',serif; font-size:1.12rem; line-height:1.5; margin-bottom:6px; display:flex; align-items:flex-start; gap:6px; }
+  .task-desc{ font-size:.83rem; line-height:1.7; color:var(--ink-soft); flex-grow:1; }
 
-  .note-header{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; border-bottom:2px dashed rgba(0,0,0,.2); padding-bottom:6px; gap:6px; }
-  .badge{ font-size:.72rem; font-weight:800; padding:2px 7px; border:1.5px solid rgba(0,0,0,.4); white-space:nowrap; }
-  .course-title{ font-size:.83rem; font-weight:800; color:#5c4326; }
-  .note-title{ font-family:'Rakkas',serif; font-size:1.12rem; margin-bottom:7px; line-height:1.35; display:flex; align-items:center; gap:6px; }
-  .recur-icon{ font-size:.85rem; }
-  .note-desc{ font-size:.85rem; margin-bottom:14px; flex-grow:1; line-height:1.45; color:var(--paper-text); }
+  /* خطوات فرعية */
+  .subs{ margin-top:8px; display:flex; flex-direction:column; gap:3px; }
+  .sub-item{
+    display:flex; align-items:center; gap:7px; font-size:.78rem; cursor:pointer;
+    padding:2px 4px; border-radius:3px; transition:background .15s;
+  }
+  .sub-item:hover{ background:var(--paper-2); }
+  .sub-item .box{
+    width:14px; height:14px; border:1.6px solid var(--ink-soft); border-radius:3px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:.6rem; color:transparent;
+  }
+  .sub-item.done .box{ background:var(--green); border-color:var(--green); color:#fff; }
+  .sub-item.done span{ text-decoration:line-through; opacity:.55; }
+  .sub-more{ font-size:.7rem; color:var(--muted); font-weight:600; }
+  .subtrack{ height:5px; background:var(--paper-2); border:1px solid var(--line); border-radius:4px; overflow:hidden; margin-top:6px; }
+  .subtrack i{ display:block; height:100%; background:var(--teal); }
 
-  .note-footer{ display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:8px; border-top:2px dashed rgba(0,0,0,.2); font-size:.78rem; flex-wrap:wrap; gap:6px; }
-  .due-date{ font-weight:800; padding:2px 6px; border:1.5px solid transparent; }
-  .due-date.due-warn{ color:var(--warn); border-color:var(--warn); }
-  .due-date.due-overdue{ color:var(--danger); border-color:var(--danger); }
-  .actions{ display:flex; gap:5px; }
-  .action-btn{ background:none; border:none; cursor:pointer; font-size:1rem; opacity:.75; }
-  .action-btn:hover{ opacity:1; }
+  .card-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:8px; border-top:1.6px dashed var(--line); font-size:.76rem; flex-wrap:wrap; gap:6px; }
+  .due{ font-weight:700; padding:2px 8px; border:1.4px solid transparent; border-radius:20px; background:var(--paper-2); }
+  .due.warn{ color:var(--ochre); border-color:var(--ochre); background:transparent; }
+  .due.over{ color:#fff8ec; background:var(--red); border-color:var(--red); }
+  .actions{ display:flex; gap:3px; }
+  .act{ background:none; border:none; font-size:.95rem; opacity:.65; padding:2px 4px; border-radius:3px; }
+  .act:hover{ opacity:1; background:var(--paper-2); }
 
-  .paper-note.completed .note-title{ text-decoration:line-through; text-decoration-style:wavy; }
-  .completed-stamp{ position:absolute; top:40%; left:50%; transform:translate(-50%,-50%) rotate(-12deg); border:3px solid #5b6b3f; color:#5b6b3f; font-family:'Rakkas',serif; font-size:1.15rem; padding:4px 12px; display:none; pointer-events:none; }
-  .paper-note.completed .completed-stamp{ display:block; }
+  /* ختم «تمّ» */
+  .stamp{
+    position:absolute; top:42%; inset-inline-start:50%; transform:translate(50%,-50%) rotate(-13deg) scale(1);
+    border:3px double var(--green); color:var(--green);
+    font-family:'Aref Ruqaa',serif; font-size:1.25rem; padding:3px 16px; border-radius:4px;
+    pointer-events:none; display:none; background:rgba(255,253,244,.35);
+  }
+  body.dark .stamp{ background:rgba(58,43,28,.45); }
+  .task-card.completed .stamp{ display:block; animation:stampIn .35s cubic-bezier(.2,2.2,.4,1); }
+  .task-card.completed .task-title span{ text-decoration:line-through; text-decoration-style:wavy; text-decoration-color:var(--accent); opacity:.7; }
+  @keyframes stampIn{ from{ transform:translate(50%,-50%) rotate(-13deg) scale(2.2); opacity:0; } to{ transform:translate(50%,-50%) rotate(-13deg) scale(1); opacity:1; } }
 
-  .empty-state{ grid-column:1/-1; text-align:center; padding:46px 18px; color:var(--text-muted); }
-  .empty-state div{ font-size:2.6rem; margin-bottom:8px; }
-  .empty-state h3{ font-family:'Rakkas',serif; font-weight:400; margin-bottom:4px; font-size:1.2rem; color:var(--text-main); }
+  .empty{ grid-column:1/-1; text-align:center; padding:52px 16px; color:var(--muted); }
+  .empty .ico{ font-size:2.4rem; margin-bottom:10px; }
+  .empty h3{ font-family:'Aref Ruqaa',serif; font-size:1.25rem; color:var(--ink); margin-bottom:4px; }
+  .empty p{ font-size:.85rem; }
 
-  /* ---------- modals ---------- */
-  .modal-overlay{ position:fixed; inset:0; background:rgba(15,23,42,.6); display:flex; justify-content:center; align-items:center; z-index:100; opacity:0; pointer-events:none; transition:opacity .25s ease; padding:15px; }
-  .modal-overlay.active{ opacity:1; pointer-events:all; }
-  .modal{ background:var(--bg-header); color:var(--text-main); padding:24px; width:100%; max-width:440px; max-height:88vh; overflow:auto; }
-  .modal h2{ font-family:'Rakkas',serif; margin-bottom:14px; font-size:1.25rem; }
-  .modal p.confirm-msg{ font-size:.95rem; line-height:1.5; margin-bottom:6px; }
-  .form-group{ margin-bottom:14px; }
-  .form-group label{ display:block; font-size:.83rem; font-weight:700; margin-bottom:5px; }
+  /* ======= عرض الأسبوع ======= */
+  .week{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:12px; }
+  .day-col{ background:var(--paper-2); border:1.8px solid var(--ink); border-radius:4px; padding:10px; min-height:180px; box-shadow:3px 3px 0 var(--shadow); }
+  .day-col.today{ background:var(--card); border-color:var(--accent); }
+  body:not(.dark) .day-col{ background:#ead9b6; }
+  .day-col.overdue{ border-color:var(--red); }
+  .day-head{ text-align:center; border-bottom:1.6px dashed var(--line); padding-bottom:7px; margin-bottom:8px; }
+  .day-head .dw{ font-family:'Aref Ruqaa',serif; font-size:.95rem; }
+  .day-head .dn{ font-size:.72rem; color:var(--muted); font-weight:600; }
+  .day-col.today .day-head .dw{ color:var(--accent); }
+  .mini{
+    background:var(--card); border:1.5px solid var(--ink-soft); border-inline-start-width:4px;
+    border-radius:3px; padding:6px 8px; font-size:.74rem; margin-bottom:6px; cursor:pointer;
+    transition:transform .15s;
+  }
+  .mini:hover{ transform:translateX(-3px); }
+  .mini b{ display:block; font-weight:700; line-height:1.45; }
+  .mini .mc{ color:var(--muted); font-size:.68rem; }
+  .mini[data-type="assignment"]{ border-inline-start-color:var(--ochre); }
+  .mini[data-type="exam"]{ border-inline-start-color:var(--red); }
+  .mini[data-type="project"]{ border-inline-start-color:var(--teal); }
+  .mini[data-type="task"]{ border-inline-start-color:var(--navy); }
+  .day-empty{ text-align:center; font-size:.72rem; color:var(--muted); padding:12px 4px; }
+
+  /* ======= التنبيهات ======= */
+  .alert{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    padding:12px 16px; margin-bottom:14px;
+    background:var(--card); border:1.8px solid var(--red); border-radius:4px;
+    box-shadow:4px 4px 0 var(--shadow);
+    font-size:.85rem; font-weight:600;
+  }
+  .alert.good{ border-color:var(--teal); }
+  .alert ul{ list-style:none; margin-top:5px; display:flex; flex-direction:column; gap:3px; font-weight:500; }
+  .alert-close{ background:none; border:none; font-size:1rem; opacity:.6; }
+  .alert-close:hover{ opacity:1; }
+
+  /* ======= النوافذ ======= */
+  .overlay{
+    position:fixed; inset:0; background:var(--overlay);
+    display:flex; justify-content:center; align-items:center; z-index:100;
+    opacity:0; pointer-events:none; transition:opacity .25s ease; padding:16px;
+  }
+  .overlay.active{ opacity:1; pointer-events:all; }
+  .modal{
+    background:var(--card); color:var(--ink);
+    border:2px solid var(--ink); border-radius:5px;
+    box-shadow:8px 8px 0 var(--shadow);
+    padding:24px; width:100%; max-width:480px; max-height:90vh; overflow:auto;
+    transform:translateY(14px); transition:transform .25s ease;
+  }
+  .overlay.active .modal{ transform:translateY(0); }
+  .modal h2{ font-family:'Aref Ruqaa',serif; margin-bottom:16px; font-size:1.35rem; border-bottom:3px double var(--line); padding-bottom:10px; }
+  .form-group{ margin-bottom:13px; }
+  .form-group > label{ display:block; font-size:.8rem; font-weight:700; margin-bottom:5px; color:var(--ink-soft); }
+  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:18px; flex-wrap:wrap; }
-  .btn-cancel{ background:transparent; color:var(--text-main); border:2px solid var(--ink); padding:8px 15px; cursor:pointer; font-weight:700; }
+  .btn-cancel{ background:transparent; color:var(--muted); border:1.8px solid var(--line); padding:8px 16px; border-radius:3px; font-weight:700; }
   .course-add-inline{ display:flex; gap:6px; margin-top:6px; }
-  .course-add-inline input{ flex:1; }
-  .settings-section + .settings-section{ margin-top:18px; padding-top:16px; border-top:2px dashed rgba(120,120,120,.35); }
-  .settings-section h3{ font-size:.88rem; font-weight:800; margin-bottom:10px; color:var(--text-muted); }
+  .settings-section + .settings-section{ margin-top:16px; padding-top:14px; border-top:1.6px dashed var(--line); }
+  .settings-section h3{ font-size:.8rem; font-weight:700; margin-bottom:10px; color:var(--muted); }
   .import-input{ display:none; }
 
+  .sub-row{ display:flex; gap:6px; margin-bottom:6px; }
+  .sub-row input{ flex:1; }
+  .sub-row .rm-sub{ background:var(--paper-2); border:1.6px solid var(--ink-soft); border-radius:3px; width:34px; color:var(--red); font-weight:700; }
+
+  /* بومودورو */
+  .pomo-wrap{ display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .pomo-ring{ position:relative; width:190px; height:190px; }
+  .pomo-ring svg{ transform:rotate(-90deg); }
+  .pomo-time{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .pomo-time b{ font-size:2.3rem; font-weight:700; letter-spacing:2px; }
+  .pomo-time span{ font-size:.75rem; color:var(--muted); font-weight:600; }
+  .pomo-presets{ display:flex; gap:6px; }
+  .pomo-ctl{ display:flex; gap:8px; }
+
+  footer.colophon{
+    max-width:1360px; margin:36px auto 0; text-align:center;
+    color:var(--muted); font-size:.75rem; border-top:1.6px dashed var(--line); padding-top:14px;
+  }
+  kbd{
+    font-family:inherit; font-size:.72rem; background:var(--paper-2);
+    border:1.4px solid var(--line); border-bottom-width:3px; border-radius:4px; padding:1px 6px;
+  }
   @media (max-width:640px){
-    header{ flex-direction:column; align-items:stretch; }
-    .controls{ justify-content:space-between; }
-    .whiteboard-frame{ padding:14px; border-width:8px; }
-    .board-grid{ grid-template-columns:1fr; }
-    .toolbar select{ flex:1 1 45%; }
+    body{ padding:14px 12px 40px; }
+    .form-row{ grid-template-columns:1fr; }
+    .board{ grid-template-columns:1fr; }
+    .topbar{ justify-content:center; }
   }
 </style>
+<base target="_blank">
 </head>
 <body>
 
+<header class="masthead">
+  <div class="topbar">
+    <div class="tools">
+      <button class="btn primary" id="addTaskBtn" type="button">✎ مهمة جديدة</button>
+      <button class="btn" id="pomoBtn" type="button">🍅 مؤقّت التركيز</button>
+    </div>
+    <div class="tools">
+      <button class="btn" id="themeBtn" type="button">☾ ليل</button>
+      <button class="btn" id="openSettingsBtn" type="button">⚙ الإعدادات</button>
+    </div>
+  </div>
+  <div class="brand">
+    <h1>رُز<em>نامَة</em></h1>
+    <div class="dateline" id="dateline">…</div>
+  </div>
+</header>
+
 <div class="shell">
 
+  <!-- ============ الشريط الجانبي ============ -->
   <aside class="sidebar">
-    <section class="welcome-note sketch">
-      <div class="pinhead"></div>
-      <h1 id="welcomeText" class="hand">أهلاً بك 👋</h1>
-      <p>نظّم مساقاتك ومهامك الجامعية من مكان واحد.</p>
-      <button class="sketch-btn small" id="openSettingsBtn" type="button">⚙️ الإعدادات</button>
+    <section class="panel borrower">
+      <h1 id="welcomeText" class="hand">أهلاً بك</h1>
+      <p class="uni" id="uniLine">دفترك الجامعي الشخصي</p>
+      <div class="barcode"></div>
+      <p style="font-size:.78rem;color:var(--muted)">حامل هذه البطاقة ملزم بتنظيم واجباته قبل نسيانها.</p>
     </section>
 
-    <section class="sidebar-card sketch">
-      <h2 class="hand squiggle">📊 نظرة سريعة</h2>
-      <p class="stat-line" id="weekStatLine">📅 لا مهام هذا الأسبوع</p>
-      <div class="stats-row"><span>نسبة الإنجاز</span><span id="completionPct">0%</span></div>
-      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+    <section class="panel">
+      <h2>ميزان الإنجاز</h2>
+      <div class="stats-flex">
+        <div class="ring">
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle class="track" cx="48" cy="48" r="42" fill="none" stroke-width="9"/>
+            <circle class="fill" id="ringFill" cx="48" cy="48" r="42" fill="none" stroke-width="9" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9"/>
+          </svg>
+          <div class="pct" id="ringPct">٠٪</div>
+        </div>
+        <div class="stat-rows">
+          <div class="row"><span><i class="dot" style="background:var(--navy)"></i>قيد التنفيذ</span><b id="stActive">٠</b></div>
+          <div class="row"><span><i class="dot" style="background:var(--green)"></i>منجَزة</span><b id="stDone">٠</b></div>
+          <div class="row"><span><i class="dot" style="background:var(--red)"></i>متأخرة</span><b id="stOver">٠</b></div>
+          <div class="row"><span><i class="dot" style="background:var(--ochre)"></i>مهام هذا الأسبوع</span><b id="stWeek">٠</b></div>
+        </div>
+      </div>
+      <div class="streak-line"><span class="flame" id="flameIco">🔥</span><span id="streakText">سلسلة الإنجاز: يوم واحد</span><span style="margin-inline-start:auto">🍅 <b id="pomoToday">٠</b> اليوم</span></div>
     </section>
 
-    <section class="sidebar-card sketch">
-      <h2 class="hand squiggle">🗂️ المساقات الدراسية</h2>
-      <p class="muted-note" id="courseEmptyNote">لم تُضف أي مساق بعد.</p>
+    <section class="panel">
+      <h2>مساقات الفصل <span class="hint">اضغط للتصفية</span></h2>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:8px" id="courseEmptyNote">لم تسجّل أي مساق بعد.</p>
       <ul class="course-list" id="courseList"></ul>
       <div class="add-row">
-        <input id="courseInput" type="text" placeholder="اسم المساق الجديد...">
-        <button class="sketch-btn small" id="addCourseBtn" type="button">إضافة</button>
+        <input id="courseInput" type="text" placeholder="اسم المساق…">
+        <button class="btn small" id="addCourseBtn" type="button">قيد</button>
+      </div>
+    </section>
+
+    <section class="panel tip-card">
+      <h2>من دفتر النصائح</h2>
+      <p class="quote" id="tipText">…</p>
+      <div class="tip-foot">
+        <span>حكمة تدرّجها كل يوم</span>
+        <button class="refresh-tip" id="refreshTipBtn" title="نصيحة أخرى">⟳</button>
       </div>
     </section>
   </aside>
 
+  <!-- ============ المحتوى ============ -->
   <div>
-    <header class="sketch">
-      <div class="logo-zone">
-        <h1 class="hand">📌 سبورة المهام <span>الجامعية</span></h1>
-      </div>
-      <div class="controls">
-        <button class="sketch-btn" id="addNoteBtn" type="button">+ إضافة ورقة</button>
-        <button class="sketch-btn" onclick="toggleDarkMode()" id="themeBtn" type="button">🌙 الوضع الداكن</button>
-      </div>
-    </header>
-
-    <div class="tip-banner sketch">
-      <div class="tip-content">
-        <span>💡</span>
-        <span id="academicTip">جاري تحميل النصيحة الدراسية...</span>
-      </div>
-      <button class="refresh-tip-btn" onclick="displayRandomTip()" title="نصيحة أخرى">🔄</button>
-    </div>
-
-    <div class="reminder-banner sketch" id="reminderBanner" style="display:none;">
+    <div class="alert" id="alertBox" style="display:none;">
       <div>
-        <strong id="reminderTitle">🔔 تذكير</strong>
-        <ul id="reminderList"></ul>
+        <strong id="alertTitle"></strong>
+        <ul id="alertList"></ul>
       </div>
-      <button class="reminder-close" id="reminderCloseBtn" title="إغلاق">✕</button>
+      <button class="alert-close" id="alertCloseBtn" title="إغلاق">✕</button>
     </div>
 
-    <div class="toolbar sketch">
-      <input type="search" id="searchInput" placeholder="🔍 ابحث عن مهمة...">
+    <div class="toolbar">
+      <input type="search" id="searchInput" placeholder="ابحث في الدفتر… ( / )">
       <select id="courseFilterSelect"><option value="">كل المساقات</option></select>
       <select id="sortSelect">
-        <option value="manual">ترتيب: الأولوية اليدوية</option>
-        <option value="date">ترتيب: الأقرب استحقاقًا</option>
-        <option value="course">ترتيب: المساق</option>
+        <option value="manual">الترتيب: يدوي (اسحب البطاقات)</option>
+        <option value="date">الترتيب: الأقرب استحقاقًا</option>
+        <option value="priority">الترتيب: الأولوية</option>
+        <option value="course">الترتيب: المساق</option>
       </select>
+      <div class="view-toggle">
+        <button class="btn small active" id="viewBoardBtn" type="button">▦ البطاقات</button>
+        <button class="btn small" id="viewWeekBtn" type="button">▤ الأسبوع</button>
+      </div>
     </div>
 
     <div class="tabs">
-      <button class="sketch-btn tab-btn active" id="tabActiveBtn" type="button">📌 اللوحة النشطة <span class="count" id="activeCount">0</span></button>
-      <button class="sketch-btn tab-btn" id="tabDoneBtn" type="button">✅ المهام المنجزة <span class="count" id="doneCount">0</span></button>
+      <button class="btn tab-btn active" id="tabActiveBtn" type="button">قيد التنفيذ <span class="count" id="activeCount">٠</span></button>
+      <button class="btn tab-btn" id="tabDoneBtn" type="button">المنجَزة <span class="count" id="doneCount">٠</span></button>
     </div>
 
     <div class="type-filters" id="typeFilters">
-      <button class="sketch-btn small active" data-type="all" type="button">الكل</button>
-      <button class="sketch-btn small" data-type="assignment" type="button">📝 واجبات</button>
-      <button class="sketch-btn small" data-type="exam" type="button">🚨 امتحانات</button>
-      <button class="sketch-btn small" data-type="task" type="button">📌 أخرى</button>
+      <button class="btn small active" data-type="all" type="button">الكل</button>
+      <button class="btn small" data-type="assignment" type="button">واجبات</button>
+      <button class="btn small" data-type="exam" type="button">امتحانات</button>
+      <button class="btn small" data-type="project" type="button">مشاريع</button>
+      <button class="btn small" data-type="task" type="button">أخرى</button>
     </div>
 
-    <main class="whiteboard-frame">
-      <div class="board-grid" id="boardGrid"></div>
-    </main>
+    <main class="board" id="board"></main>
+    <main class="week" id="weekView" style="display:none;"></main>
   </div>
-
 </div>
 
-<!-- نافذة إضافة / تعديل مهمة -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal sketch">
-    <h2 id="modalTitle">تعليق ورقة جديدة على السبورة</h2>
-    <form id="noteForm">
-      <div class="form-group">
-        <label>عنوان المهمة / الامتحان</label>
-        <input type="text" id="noteTitle" placeholder="مثال: تسليم مشروع خوارزميات" required>
-      </div>
+<footer class="colophon">
+  رُزنامة — يُحفَظ كل شيء في متصفحك محليًا · <kbd>Enter</kbd> مهمة جديدة · <kbd>/</kbd> بحث · <kbd>Esc</kbd> إغلاق
+</footer>
 
+<!-- ============ نافذة المهمة ============ -->
+<div class="overlay" id="taskOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">قيّد مهمة جديدة</h2>
+    <form id="taskForm">
       <div class="form-group">
-        <label>المادة / المساق</label>
-        <select id="courseSelect" required></select>
-        <div class="course-add-inline" id="quickAddCourseRow" style="display:none;">
-          <input type="text" id="quickCourseInput" placeholder="اكتب اسم المساق الجديد...">
-          <button type="button" class="sketch-btn small" id="quickAddCourseBtn">إضافة</button>
+        <label>عنوان المهمة</label>
+        <input type="text" id="fTitle" placeholder="مثال: تسليم تقرير المختبر" required>
+      </div>
+      <div class="form-group">
+        <label>المساق</label>
+        <select id="fCourse" required></select>
+        <div class="course-add-inline" id="quickCourseRow" style="display:none;">
+          <input type="text" id="quickCourseInput" placeholder="اسم مساق جديد…">
+          <button type="button" class="btn small" id="quickCourseBtn">قيده</button>
         </div>
       </div>
-
-      <div class="form-group">
-        <label>نوع الورقة</label>
-        <select id="noteType">
-          <option value="assignment">📝 واجب دراسي (أصفر)</option>
-          <option value="exam">🚨 امتحان / اختبار (أحمر)</option>
-          <option value="task">📌 مهمة تنظيمية (أزرق)</option>
-        </select>
+      <div class="form-row">
+        <div class="form-group">
+          <label>النوع</label>
+          <select id="fType">
+            <option value="assignment">واجب</option>
+            <option value="exam">امتحان</option>
+            <option value="project">مشروع</option>
+            <option value="task">مهمة عادية</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>الأولوية</label>
+          <select id="fPrio">
+            <option value="high">🚩 عاجل</option>
+            <option value="normal" selected>عادي</option>
+            <option value="low">🕊 هادئ</option>
+          </select>
+        </div>
       </div>
-
-      <div class="form-group">
-        <label>تاريخ الاستحقاق / الموعد</label>
-        <input type="date" id="dueDate" required>
+      <div class="form-row">
+        <div class="form-group">
+          <label>تاريخ الاستحقاق</label>
+          <input type="date" id="fDate" required>
+        </div>
+        <div class="form-group">
+          <label>الوقت (اختياري)</label>
+          <input type="time" id="fTime">
+        </div>
       </div>
-
       <div class="form-group">
-        <label class="checkline"><input type="checkbox" id="recurCheckbox"> 🔁 تتكرر أسبوعيًا</label>
+        <label>خطوات المهمة <span style="font-weight:400;color:var(--muted)">(قسّمها لتنجز أسرع)</span></label>
+        <div id="subList"></div>
+        <button type="button" class="btn small ghost" id="addSubBtn">＋ أضف خطوة</button>
       </div>
-
       <div class="form-group">
-        <label>ملاحظات إضافية</label>
-        <textarea id="noteDesc" rows="3" placeholder="أضف أي تفاصيل سريعة..."></textarea>
+        <label class="checkline"><input type="checkbox" id="fRecur"> تتكرر أسبوعيًا 🔁</label>
       </div>
-
+      <div class="form-group">
+        <label>ملاحظات</label>
+        <textarea id="fDesc" rows="3" placeholder="تفاصيل، روابط، صفحات المراجعة…"></textarea>
+      </div>
       <div class="modal-actions">
-        <button type="button" class="btn-cancel" id="cancelModalBtn">إلغاء</button>
-        <button type="submit" class="sketch-btn primary" id="submitBtn">تثبيت بالدبوس 📌</button>
+        <button type="button" class="btn-cancel" id="cancelTaskBtn">إلغاء</button>
+        <button type="submit" class="btn primary" id="submitBtn">قيّدها في الدفتر ✒</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- نافذة الإعدادات -->
-<div class="modal-overlay" id="settingsOverlay">
-  <div class="modal sketch">
-    <h2>⚙️ الإعدادات</h2>
-
+<!-- ============ نافذة الإعدادات ============ -->
+<div class="overlay" id="settingsOverlay">
+  <div class="modal">
+    <h2>إعدادات الدفتر</h2>
     <div class="settings-section">
-      <h3>الحساب</h3>
-      <div class="form-group">
-        <label>اسم المستخدم</label>
-        <input type="text" id="usernameInput" placeholder="اكتب اسمك...">
-      </div>
+      <h3>البطاقة الشخصية</h3>
+      <div class="form-group"><label>الاسم</label><input type="text" id="sName" placeholder="اسمك"></div>
+      <div class="form-group"><label>التخصص / الجامعة</label><input type="text" id="sUni" placeholder="مثال: هندسة حاسوب — جامعة الملك سعود"></div>
     </div>
-
     <div class="settings-section">
       <h3>التنبيهات والصوت</h3>
-      <div class="form-group">
-        <label class="checkline"><input type="checkbox" id="notifyCheckbox"> 🔔 تذكير بالمهام المستحقة غدًا</label>
-      </div>
-      <div class="form-group">
-        <label class="checkline"><input type="checkbox" id="soundCheckbox"> 🔈 صوت عند تثبيت ورقة جديدة</label>
-      </div>
+      <div class="form-group"><label class="checkline"><input type="checkbox" id="sNotif"> 🔔 إشعار بالمهام المستحقة غدًا</label></div>
+      <div class="form-group"><label class="checkline"><input type="checkbox" id="sSound"> 🔈 أصوات القيد والإنجاز</label></div>
     </div>
-
     <div class="settings-section">
       <h3>نسخ احتياطي</h3>
-      <div class="modal-actions" style="justify-content:flex-start;">
-        <button type="button" class="sketch-btn small" id="exportBtn" style="display:none;">⬇️ تصدير نسخة احتياطية</button>
-        <button type="button" class="sketch-btn small" id="importBtn">⬆️ استيراد نسخة</button>
+      <div class="modal-actions" style="justify-content:flex-start;margin-top:0;">
+        <button type="button" class="btn small" id="exportBtn">⬇ تصدير JSON</button>
+        <button type="button" class="btn small" id="importBtn">⬆ استيراد</button>
         <input type="file" accept="application/json" class="import-input" id="importInput">
+        <button type="button" class="btn small danger" id="wipeBtn" style="margin-inline-start:auto;">مسح الكل</button>
       </div>
     </div>
-
     <div class="modal-actions">
       <button type="button" class="btn-cancel" id="cancelSettingsBtn">إغلاق</button>
-      <button type="button" class="sketch-btn primary" id="saveSettingsBtn">حفظ</button>
+      <button type="button" class="btn primary" id="saveSettingsBtn">حفظ</button>
     </div>
   </div>
 </div>
 
-<!-- نافذة تأكيد عامة -->
-<div class="modal-overlay" id="confirmOverlay">
-  <div class="modal sketch" style="max-width:380px;">
+<!-- ============ نافذة تأكيد ============ -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal" style="max-width:390px;">
     <h2 id="confirmTitle">تأكيد</h2>
-    <p class="confirm-msg" id="confirmMsg"></p>
+    <p id="confirmMsg" style="font-size:.92rem;line-height:1.7;"></p>
     <div class="modal-actions">
-      <button type="button" class="btn-cancel" id="confirmCancelBtn">إلغاء</button>
-      <button type="button" class="sketch-btn danger" id="confirmOkBtn">تأكيد</button>
+      <button type="button" class="btn-cancel" id="confirmCancelBtn">تراجع</button>
+      <button type="button" class="btn danger" id="confirmOkBtn">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ نافذة بومودورو ============ -->
+<div class="overlay" id="pomoOverlay">
+  <div class="modal" style="max-width:360px;">
+    <h2>مؤقّت التركيز 🍅</h2>
+    <div class="pomo-wrap">
+      <div class="pomo-ring">
+        <svg width="190" height="190" viewBox="0 0 190 190">
+          <circle class="track" cx="95" cy="95" r="82" fill="none" stroke="var(--line)" stroke-width="11"/>
+          <circle id="pomoArc" cx="95" cy="95" r="82" fill="none" stroke="var(--accent)" stroke-width="11" stroke-linecap="round" stroke-dasharray="515.2" stroke-dashoffset="0" style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1s linear;"/>
+        </svg>
+        <div class="pomo-time"><b id="pomoTime">25:00</b><span id="pomoState">جلسة تركيز</span></div>
+      </div>
+      <div class="pomo-presets">
+        <button class="btn small" data-min="25" type="button">تركيز 25</button>
+        <button class="btn small" data-min="5" type="button">راحة 5</button>
+        <button class="btn small" data-min="15" type="button">راحة 15</button>
+      </div>
+      <div class="pomo-ctl">
+        <button class="btn primary" id="pomoStartBtn" type="button" style="flex:1;">ابدأ</button>
+        <button class="btn" id="pomoResetBtn" type="button">إعادة</button>
+      </div>
+      <input type="text" id="pomoLabel" placeholder="ماذا ستدرس في هذه الجلسة؟ (اختياري)" style="text-align:center;">
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn-cancel" id="closePomoBtn">إغلاق</button>
     </div>
   </div>
 </div>
 
 <script>
-  // طلب إذن الحفظ الدائم للبيانات وعدم حذفها تلقائياً
-if (navigator.storage && navigator.storage.persist) {
-  navigator.storage.persist().then((persistent) => {
-    if (persistent) {
-      console.log("تم تفعيل التخزين الدائم للبيانات بنجاح ✅");
-    }
-  });
-}
-  
 (function(){
   "use strict";
 
-  var academicTips = [
-    "تقنية بومودورو: ذاكر لمدة 25 دقيقة ثم خذ استراحة لمدة 5 دقائق لتجديد تركيزك.",
-    "شرح المادة لغيرك أو لنفسك بصوت عالٍ هو أفضل طريقة لاختبار فهمك الحقيقي.",
-    "لا تراكم الدراسة؛ مراجعة 20 دقيقة يومياً أفضل من 8 ساعات ليلة الامتحان.",
-    "اكتب التواريخ المهمة للامتحانات والواجبات فور إعلانها لتقليل التوتر.",
-    "تأكد من أخذ قسط كافٍ من النوم قبل الامتحانات، فالنوم يرسخ المعلومات في الذاكرة.",
-    "قسم المشاريع الكبيرة إلى مهام صغيرة جداً على السبورة لتسهيل البدء فيها.",
-    "قم بحل أسئلة السنوات السابقة؛ فهي تعطيك فكرة دقيقة عن نمط أسئلة الدكتور."
+  /* ============ أدوات عامة ============ */
+  var AR = new Intl.NumberFormat('ar');
+  function load(k, fb){ try{ var r = localStorage.getItem(k); return r == null ? fb : JSON.parse(r); }catch(e){ return fb; } }
+  function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+  function esc(t){ var d = document.createElement('div'); d.innerText = (t == null ? '' : t); return d.innerHTML; }
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function todayISO(){ var d = new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function addDaysISO(iso, days){ var d = new Date(iso+'T00:00:00'); d.setDate(d.getDate()+days); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function diffDays(iso){ return Math.round((new Date(iso+'T00:00:00') - new Date(todayISO()+'T00:00:00')) / 86400000); }
+  function fmtDay(iso){ return new Intl.DateTimeFormat('ar',{weekday:'long', day:'numeric', month:'long'}).format(new Date(iso+'T00:00:00')); }
+  var TYPE_NAME = { assignment:'واجب', exam:'امتحان', project:'مشروع', task:'مهمة' };
+
+  var tips = [
+    "قسّم المشروع الكبير إلى خطوات صغيرة جدًا؛ فالبداية الصغيرة أنصف من خطة كبيرة لم تبدأ.",
+    "اشرح الدرس بصوت مرتفع وكأنك تدرّس زميلًا؛ ما عجزت عن شرحه لم تفهمه بعد.",
+    "أسئلة السنوات السابقة مرآة نمط الدكتور — احلّها قبل الامتحان لا بعده.",
+    "عشرون دقيقة مراجعة يوميًا خير من ثماني ساعات في ليلة الاختبار.",
+    "اكتب المهمة فور إعلانها؛ فالذاكرة تخونك لكن الدفتر لا يخون.",
+    "النوم قبل الامتحان عبادة علمية؛ به ترسخ الذاكرة ما ذاكرته.",
+    "أطفئ الإشعارات وأغلق الأبواب أثناء جلسة التركيز — الدماغ يكره المقاطعة.",
+    "ابدأ بالواجب الأقرب استحقاقًا لا الأسهل؛ فالوقت لا ينتظر أحدًا.",
+    "غيّر مكان المذاكرة أحيانًا؛ للدماغ حب للتجديد.",
+    "راجع قبل النوم مباشرة ما درسته اليوم؛ فالتثبيت يحدث في الهدوء."
   ];
 
-  function loadJSON(key, fallback){
-    try{
-      var raw = localStorage.getItem(key);
-      if(!raw) return fallback;
-      var parsed = JSON.parse(raw);
-      return parsed == null ? fallback : parsed;
-    }catch(e){ return fallback; }
-  }
-  function saveJSON(key, value){
-    try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){ /* ignore */ }
-  }
-  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
-  function todayISO(){
-    var d = new Date();
-    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-  }
-  function addDaysISO(iso, days){
-    var d = new Date(iso + "T00:00:00");
-    d.setDate(d.getDate() + days);
-    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-  }
-  function diffDaysFromToday(iso){
-    var today = new Date(todayISO() + "T00:00:00");
-    var target = new Date(iso + "T00:00:00");
-    return Math.round((target - today) / 86400000);
-  }
-  function escapeHtml(text){
-    var div = document.createElement('div');
-    div.innerText = text == null ? '' : text;
-    return div.innerHTML;
-  }
-  function getTypeName(type){
-    switch(type){ case 'assignment': return 'واجب'; case 'exam': return 'امتحان'; case 'task': return 'مهمة'; default: return ''; }
-  }
+  /* ============ الحالة ============ */
+  var courses = load('ruz_courses', null);
+  var tasks   = load('ruz_tasks', null);
+  var settings= load('ruz_settings', null);
+  var order   = load('ruz_order', []);
+  var dayLog  = load('ruz_daylog', {});
+  var reminded= load('ruz_reminded', []);
+  var sessions= load('ruz_sessions', {});
 
-  // ---------- state ----------
-  var courses = loadJSON('student_courses_v2', null);
-  var notes = loadJSON('student_notes_v2', null);
-  var settings = loadJSON('student_settings_v2', null);
-  var manualOrder = loadJSON('student_manual_order_v2', null);
-  var remindedIds = loadJSON('student_reminded_v2', []);
-
-  // ---------- migrate legacy v1 data (plain string courses / course text on notes) ----------
-  if(courses === null || notes === null){
-    var legacyCourseNames = loadJSON('student_courses', []);
-    var legacyNotes = loadJSON('student_whiteboard_notes', []);
-    var legacyUsername = loadJSON('student_username', '');
-
-    courses = legacyCourseNames.map(function(name){ return { id: uid(), name: name }; });
-    function findOrCreateCourseId(name){
-      if(!name) return courses.length ? courses[0].id : null;
-      var found = courses.find(function(c){ return c.name === name; });
-      if(found) return found.id;
-      var made = { id: uid(), name: name };
-      courses.push(made);
-      return made.id;
-    }
-    notes = legacyNotes.map(function(n){
-      return {
-        id: n.id || uid(),
-        title: n.title, courseId: findOrCreateCourseId(n.course),
-        type: n.type, date: n.date, desc: n.desc,
-        completed: !!n.completed, completedAt: n.completedAt || null,
-        recurring: false
-      };
-    });
-    settings = { username: legacyUsername, notificationsEnabled:false, soundEnabled:true };
-  }
-  if(courses === null) courses = [];
-  if(notes === null){
-    var c1 = { id: uid(), name: 'أنظمة التحكم' }, c2 = { id: uid(), name: 'قواعد البيانات' };
+  if(courses === null || tasks === null){
+    var c1 = { id: uid(), name: 'هياكل البيانات' };
+    var c2 = { id: uid(), name: 'رياضيات متقدمة' };
     courses = [c1, c2];
-    notes = [
-      { id: uid(), title:'حل واجب التحكم الخطي', courseId:c1.id, type:'assignment', date:addDaysISO(todayISO(),5), desc:'كتابة كود MATLAB لتأكيد استجابة النظام من الدرجة الثانية.', completed:false, completedAt:null, recurring:false },
-      { id: uid(), title:'امتحان منتصف الفصل (Midterm)', courseId:c2.id, type:'exam', date:addDaysISO(todayISO(),10), desc:'مراجعة المخططات ERD وأوامر DDL و PostgreSQL.', completed:false, completedAt:null, recurring:false }
+    var yesterday = addDaysISO(todayISO(), -1);
+    tasks = [
+      { id: uid(), title:'حل تمرين الشجرة الثنائية', courseId:c1.id, type:'assignment', prio:'high',
+        date:addDaysISO(todayISO(),0), time:'', desc:'الفصل الثالث — مسائل ١ إلى ٧.',
+        sub:[{t:'قراءة المحاضرة',d:true},{t:'حل المسائل',d:false},{t:'مراجعة الحلول',d:false}], recur:false,
+        completed:false, completedAt:null, createdAt:Date.now() },
+      { id: uid(), title:'امتحان قصير — التفاضل والتكامل', courseId:c2.id, type:'exam', prio:'normal',
+        date:addDaysISO(todayISO(),4), time:'10:00', desc:'يشمل المقاطع ٥ و٦. خصص ساعتين للمراجعة.',
+        sub:[{t:'تلخيص القوانين',d:false},{t:'حل نموذج امتحان',d:false}], recur:false,
+        completed:false, completedAt:null, createdAt:Date.now() },
+      { id: uid(), title:'قراءة ورقة بحثية لمناقشتها', courseId:c1.id, type:'project', prio:'low',
+        date:addDaysISO(todayISO(),-1), time:'', desc:'', sub:[], recur:false,
+        completed:false, completedAt:null, createdAt:Date.now() },
+      { id: uid(), title:'تسجيل في منصة المقررات', courseId:c2.id, type:'task', prio:'normal',
+        date:yesterday, time:'', desc:'', sub:[], recur:false,
+        completed:true, completedAt:new Date(yesterday+'T20:00:00').getTime(), createdAt:Date.now() }
     ];
+    order = tasks.map(function(t){ return t.id; });
+    dayLog[yesterday] = 1;
+    settings = { name:'', uni:'', notif:false, sound:true };
+    save('ruz_courses', courses); save('ruz_tasks', tasks); save('ruz_order', order);
+    save('ruz_daylog', dayLog); save('ruz_settings', settings);
   }
-  if(settings === null) settings = {};
-  if(typeof settings.username !== 'string') settings.username = '';
-  if(typeof settings.notificationsEnabled !== 'boolean') settings.notificationsEnabled = false;
-  if(typeof settings.soundEnabled !== 'boolean') settings.soundEnabled = true;
-  if(manualOrder === null) manualOrder = notes.map(function(n){ return n.id; });
-  // keep manualOrder in sync with existing note ids
-  notes.forEach(function(n){ if(manualOrder.indexOf(n.id) === -1) manualOrder.push(n.id); });
-  manualOrder = manualOrder.filter(function(id){ return notes.some(function(n){ return n.id === id; }); });
+  if(settings === null) settings = { name:'', uni:'', notif:false, sound:true };
+  if(typeof settings.name !== 'string') settings.name = '';
+  if(typeof settings.uni !== 'string') settings.uni = '';
+  if(typeof settings.notif !== 'boolean') settings.notif = false;
+  if(typeof settings.sound !== 'boolean') settings.sound = true;
 
-  function persistNotes(){ saveJSON('student_notes_v2', notes); }
-  function persistCourses(){ saveJSON('student_courses_v2', courses); }
-  function persistSettings(){ saveJSON('student_settings_v2', settings); }
-  function persistOrder(){ saveJSON('student_manual_order_v2', manualOrder); }
-  function persistReminded(){ saveJSON('student_reminded_v2', remindedIds); }
+  function persist(){ save('ruz_tasks', tasks); save('ruz_courses', courses); save('ruz_order', order); save('ruz_settings', settings); save('ruz_daylog', dayLog); save('ruz_reminded', reminded); save('ruz_sessions', sessions); }
+  function courseName(id){ var c = courses.find(function(x){ return x.id === id; }); return c ? c.name : 'مساق محذوف'; }
+  tasks.forEach(function(t){ if(order.indexOf(t.id) === -1) order.unshift(t.id); });
+  order = order.filter(function(id){ return tasks.some(function(t){ return t.id === id; }); });
 
-  function courseName(id){
-    var c = courses.find(function(c){ return c.id === id; });
-    return c ? c.name : 'مساق محذوف';
+  /* حالة العرض */
+  var typeFilter='all', tab='active', search='', courseFilter='', sortMode='manual', view='board', editingId=null, draggedId=null;
+
+  /* ============ الصوت ============ */
+  var actx = null;
+  function tone(freqA, freqB, dur, vol){
+    if(!settings.sound) return;
+    try{
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      var t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(freqA, t);
+      o.frequency.exponentialRampToValueAtTime(freqB, t + dur);
+      g.gain.setValueAtTime(0.001, t);
+      g.gain.exponentialRampToValueAtTime(vol, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      o.connect(g); g.connect(actx.destination);
+      o.start(t); o.stop(t + dur + 0.05);
+    }catch(e){}
   }
+  var pinSound  = function(){ tone(720, 300, 0.14, 0.15); };
+  var doneChime = function(){ tone(523, 523, 0.12, 0.12); setTimeout(function(){ tone(784, 784, 0.2, 0.12); }, 110); };
 
-  var currentTypeFilter = 'all';
-  var currentTab = 'active';
-  var editingNoteId = null;
-  var searchQuery = '';
-  var courseFilterId = '';
-  var sortMode = 'manual';
-  var draggedId = null;
-
-  // ================= THEME =================
-  function initDarkMode(){
-    var isDark = localStorage.getItem('student_theme') === 'dark';
-    if(isDark){ document.body.classList.add('dark-mode'); document.getElementById('themeBtn').innerHTML = '☀️ الوضع الفاتح'; }
-  }
-  window.toggleDarkMode = function(){
-    var body = document.body;
-    body.classList.toggle('dark-mode');
-    var isDark = body.classList.contains('dark-mode');
-    try{ localStorage.setItem('student_theme', isDark ? 'dark' : 'light'); }catch(e){}
-    document.getElementById('themeBtn').innerHTML = isDark ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';
-  };
-
-  window.displayRandomTip = function(){
-    var i = Math.floor(Math.random() * academicTips.length);
-    document.getElementById('academicTip').innerText = academicTips[i];
-  };
-
-  // ================= WELCOME =================
-  function renderWelcome(){
-    var name = (settings.username || '').trim();
-    document.getElementById('welcomeText').textContent = name ? ('أهلاً، ' + name + ' 👋') : 'أهلاً بك 👋';
+  /* ============ السلسلة (Streak) ============ */
+  function calcStreak(){
+    var streak = 0, d = todayISO();
+    if(!dayLog[d]) d = addDaysISO(d, -1);
+    while(dayLog[d] > 0){ streak++; d = addDaysISO(d, -1); }
+    return streak;
   }
 
-  // ================= STATS =================
+  /* ============ العرض: الترويسة والترحيب ============ */
+  function renderHeader(){
+    document.getElementById('dateline').textContent = new Intl.DateTimeFormat('ar-EG',{weekday:'long', day:'numeric', month:'long', year:'numeric'}).format(new Date());
+    var n = settings.name.trim();
+    document.getElementById('welcomeText').textContent = n ? ('أهلاً، ' + n) : 'أهلاً بك';
+    document.getElementById('uniLine').textContent = settings.uni.trim() || 'دفترك الجامعي الشخصي';
+  }
+
   function renderStats(){
-    var active = notes.filter(function(n){ return !n.completed; });
-    var done = notes.filter(function(n){ return n.completed; });
-    var weekCount = active.filter(function(n){ var d = diffDaysFromToday(n.date); return d >= 0 && d <= 6; }).length;
-    document.getElementById('weekStatLine').textContent = weekCount > 0 ? ('📅 لديك ' + weekCount + ' مهمة هذا الأسبوع') : '📅 لا مهام هذا الأسبوع';
+    var active = tasks.filter(function(t){ return !t.completed; });
+    var done = tasks.filter(function(t){ return t.completed; });
+    var over = active.filter(function(t){ return diffDays(t.date) < 0; }).length;
+    var week = active.filter(function(t){ var d = diffDays(t.date); return d >= 0 && d <= 6; }).length;
     var total = active.length + done.length;
-    var pct = total > 0 ? Math.round((done.length / total) * 100) : 0;
-    document.getElementById('completionPct').textContent = pct + '%';
-    document.getElementById('progressFill').style.width = pct + '%';
+    var pct = total ? Math.round(done.length / total * 100) : 0;
+
+    var C = 263.9;
+    document.getElementById('ringFill').style.strokeDashoffset = C - (C * pct / 100);
+    document.getElementById('ringPct').textContent = AR.format(pct) + '٪';
+    document.getElementById('stActive').textContent = AR.format(active.length);
+    document.getElementById('stDone').textContent = AR.format(done.length);
+    document.getElementById('stOver').textContent = AR.format(over);
+    document.getElementById('stWeek').textContent = AR.format(week);
+    document.getElementById('activeCount').textContent = AR.format(active.length);
+    document.getElementById('doneCount').textContent = AR.format(done.length);
+
+    var s = calcStreak();
+    document.getElementById('streakText').textContent = s === 0 ? 'ابدأ سلسلة إنجاز اليوم'
+      : (s === 1 ? 'سلسلة الإنجاز: يوم واحد' : 'سلسلة الإنجاز: ' + AR.format(s) + ' أيام متتالية');
+    document.getElementById('flameIco').style.opacity = s > 0 ? 1 : 0.25;
+    document.getElementById('pomoToday').textContent = AR.format(sessions[todayISO()] || 0);
   }
 
-  // ================= COURSES =================
+  /* ============ العرض: المساقات ============ */
   function renderCourses(){
     var list = document.getElementById('courseList');
-    var emptyNote = document.getElementById('courseEmptyNote');
+    document.getElementById('courseEmptyNote').style.display = courses.length ? 'none' : 'block';
     list.innerHTML = '';
-    emptyNote.style.display = courses.length ? 'none' : 'block';
-
     courses.forEach(function(c){
       var li = document.createElement('li');
-      li.className = 'course-chip';
-      li.innerHTML = '<span>' + escapeHtml(c.name) + '</span><button class="rm" type="button" data-id="' + c.id + '" title="حذف المساق">✕</button>';
+      li.className = 'course-chip' + (courseFilter === c.id ? ' sel' : '');
+      li.innerHTML = '<span>' + esc(c.name) + '</span><button class="rm" data-id="' + c.id + '" title="حذف المساق">✕</button>';
+      li.setAttribute('data-id', c.id);
       list.appendChild(li);
     });
 
-    // note-modal course select
-    var select = document.getElementById('courseSelect');
-    var current = select.value;
-    select.innerHTML = '';
-    if(courses.length === 0){
-      var opt0 = document.createElement('option'); opt0.value = ''; opt0.textContent = 'لا توجد مساقات — أضف واحدًا أولاً';
-      select.appendChild(opt0);
-    }else{
-      courses.forEach(function(c){
-        var opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.name; select.appendChild(opt);
-      });
-    }
-    var addNewOpt = document.createElement('option'); addNewOpt.value = '__new__'; addNewOpt.textContent = '+ إضافة مساق جديد...';
-    select.appendChild(addNewOpt);
-    if(courses.some(function(c){ return c.id === current; })) select.value = current;
+    var sel = document.getElementById('fCourse');
+    var cur = sel.value;
+    sel.innerHTML = '';
+    courses.forEach(function(c){ var o = document.createElement('option'); o.value = c.id; o.textContent = c.name; sel.appendChild(o); });
+    var on = document.createElement('option'); on.value = '__new__'; on.textContent = '＋ مساق جديد…'; sel.appendChild(on);
+    if(courses.some(function(c){ return c.id === cur; })) sel.value = cur;
 
-    // toolbar course filter select
-    var filterSelect = document.getElementById('courseFilterSelect');
-    var currentFilter = filterSelect.value;
-    filterSelect.innerHTML = '<option value="">كل المساقات</option>';
-    courses.forEach(function(c){
-      var opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.name; filterSelect.appendChild(opt);
-    });
-    if(courses.some(function(c){ return c.id === currentFilter; })) filterSelect.value = currentFilter;
+    var fs = document.getElementById('courseFilterSelect');
+    var fc = fs.value;
+    fs.innerHTML = '<option value="">كل المساقات</option>';
+    courses.forEach(function(c){ var o = document.createElement('option'); o.value = c.id; o.textContent = c.name; fs.appendChild(o); });
+    if(courses.some(function(c){ return c.id === fc; })) fs.value = fc;
   }
 
   document.getElementById('addCourseBtn').addEventListener('click', function(){
-    var input = document.getElementById('courseInput');
-    var name = input.value.trim();
-    if(!name || courses.some(function(c){ return c.name === name; })){ input.value=''; return; }
-    courses.push({ id: uid(), name: name });
-    persistCourses(); input.value = ''; renderCourses();
+    var inp = document.getElementById('courseInput'), n = inp.value.trim();
+    if(!n || courses.some(function(c){ return c.name === n; })){ inp.value=''; return; }
+    courses.push({ id: uid(), name: n }); inp.value = '';
+    persist(); renderCourses(); renderAll();
   });
   document.getElementById('courseInput').addEventListener('keydown', function(e){ if(e.key === 'Enter') document.getElementById('addCourseBtn').click(); });
 
   document.getElementById('courseList').addEventListener('click', function(e){
-    var btn = e.target.closest('.rm');
-    if(!btn) return;
-    var id = btn.getAttribute('data-id');
-    var name = courseName(id);
-    sketchConfirm('حذف مساق "' + name + '"؟', 'المهام المرتبطة به ستبقى لكن دون مساق صالح.').then(function(ok){
-      if(!ok) return;
-      courses = courses.filter(function(c){ return c.id !== id; });
-      persistCourses(); renderCourses(); renderNotes();
-    });
+    var rm = e.target.closest('.rm');
+    if(rm){
+      var id = rm.getAttribute('data-id');
+      confirmDlg('شطب المساق «' + courseName(id) + '»؟', 'ستبقى مهامه في الدفتر لكن بلا مساق صالح.').then(function(ok){
+        if(!ok) return;
+        courses = courses.filter(function(c){ return c.id !== id; });
+        if(courseFilter === id) courseFilter = '';
+        persist(); renderCourses(); renderAll();
+      });
+      return;
+    }
+    var chip = e.target.closest('.course-chip');
+    if(chip){
+      var cid = chip.getAttribute('data-id');
+      courseFilter = (courseFilter === cid) ? '' : cid;
+      var fs = document.getElementById('courseFilterSelect');
+      fs.value = courseFilter;
+      renderCourses(); renderAll();
+    }
   });
 
-  document.getElementById('courseSelect').addEventListener('change', function(){
-    document.getElementById('quickAddCourseRow').style.display = this.value === '__new__' ? 'flex' : 'none';
-  });
-  document.getElementById('quickAddCourseBtn').addEventListener('click', function(){
-    var input = document.getElementById('quickCourseInput');
-    var name = input.value.trim();
-    if(!name) return;
-    var existing = courses.find(function(c){ return c.name === name; });
-    var courseObj = existing || { id: uid(), name: name };
-    if(!existing){ courses.push(courseObj); persistCourses(); }
+  document.getElementById('quickCourseBtn').addEventListener('click', function(){
+    var inp = document.getElementById('quickCourseInput'), n = inp.value.trim();
+    if(!n) return;
+    var ex = courses.find(function(c){ return c.name === n; });
+    var c = ex || { id: uid(), name: n };
+    if(!ex){ courses.push(c); persist(); }
     renderCourses();
-    document.getElementById('courseSelect').value = courseObj.id;
-    document.getElementById('quickAddCourseRow').style.display = 'none';
-    input.value = '';
+    document.getElementById('fCourse').value = c.id;
+    document.getElementById('quickCourseRow').style.display = 'none';
+    inp.value = '';
+  });
+  document.getElementById('fCourse').addEventListener('change', function(){
+    document.getElementById('quickCourseRow').style.display = this.value === '__new__' ? 'flex' : 'none';
   });
 
-  document.getElementById('courseFilterSelect').addEventListener('change', function(){ courseFilterId = this.value; renderNotes(); });
+  /* ============ العرض: البطاقات ============ */
+  function filteredPool(){
+    var pool = tasks.filter(function(t){ return tab === 'active' ? !t.completed : t.completed; });
+    if(tab === 'active' && typeFilter !== 'all') pool = pool.filter(function(t){ return t.type === typeFilter; });
+    if(courseFilter) pool = pool.filter(function(t){ return t.courseId === courseFilter; });
+    if(search) pool = pool.filter(function(t){
+      return (t.title + ' ' + (t.desc||'') + ' ' + courseName(t.courseId)).toLowerCase().indexOf(search) !== -1;
+    });
+    var PR = { high:0, normal:1, low:2 };
+    pool = pool.slice().sort(function(a,b){
+      if(tab === 'done') return (b.completedAt||0) - (a.completedAt||0);
+      if(sortMode === 'date') return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+      if(sortMode === 'priority') return PR[a.prio||'normal'] - PR[b.prio||'normal'] || (a.date < b.date ? -1 : 1);
+      if(sortMode === 'course'){ var ca = courseName(a.courseId), cb = courseName(b.courseId); return ca !== cb ? (ca < cb ? -1 : 1) : (a.date < b.date ? -1 : 1); }
+      return order.indexOf(a.id) - order.indexOf(b.id);
+    });
+    return pool;
+  }
 
-  // ================= SEARCH & SORT =================
-  document.getElementById('searchInput').addEventListener('input', function(){ searchQuery = this.value.trim().toLowerCase(); renderNotes(); });
-  document.getElementById('sortSelect').addEventListener('change', function(){ sortMode = this.value; renderNotes(); });
+  function cardHTML(t){
+    var d = diffDays(t.date), dueCls = '', dueIco = '';
+    if(!t.completed){
+      if(d < 0){ dueCls = 'over'; dueIco = '⏰ متأخر '; }
+      else if(d === 0){ dueCls = 'warn'; dueIco = 'اليوم '; }
+      else if(d === 1){ dueCls = 'warn'; dueIco = 'غدًا '; }
+      else if(d <= 3){ dueCls = 'warn'; }
+    }
+    var prioBadge = t.prio === 'high' ? '<span class="badge prio-high">🚩 عاجل</span>'
+                  : t.prio === 'low' ? '<span class="badge prio-low">🕊 هادئ</span>' : '';
+    var subs = t.sub || [];
+    var doneSubs = subs.filter(function(s){ return s.d; }).length;
+    var subHtml = '';
+    if(subs.length){
+      var shown = subs.slice(0, 3).map(function(s, i){
+        return '<div class="sub-item' + (s.d ? ' done' : '') + '" data-idx="' + i + '"><span class="box">✓</span><span>' + esc(s.t) + '</span></div>';
+      }).join('');
+      var more = subs.length > 3 ? '<span class="sub-more">+' + AR.format(subs.length - 3) + ' أخرى · </span>' : '';
+      var pctS = Math.round(doneSubs / subs.length * 100);
+      subHtml = '<div class="subs">' + shown + '<div style="display:flex;align-items:center;gap:6px">' +
+        '<div class="subtrack" style="flex:1;margin-top:4px"><i style="width:' + pctS + '%"></i></div>' +
+        more + '<span class="sub-more">' + AR.format(doneSubs) + '/' + AR.format(subs.length) + '</span></div></div>';
+    }
+    return '' +
+    '<div class="card-top"><span class="course-name">' + esc(courseName(t.courseId)) + '</span>' +
+      '<span class="badges">' + prioBadge + '<span class="badge">' + TYPE_NAME[t.type] + '</span></span></div>' +
+    '<div class="task-title"><span>' + esc(t.title) + '</span>' + (t.recur ? '<span title="متكررة أسبوعيًا">🔁</span>' : '') + '</div>' +
+    (t.desc ? '<div class="task-desc">' + esc(t.desc) + '</div>' : '') +
+    subHtml +
+    '<div class="card-foot"><span class="due ' + dueCls + '">' + dueIco + fmtDay(t.date) + (t.time ? ' · ' + esc(t.time) : '') + '</span>' +
+      '<div class="actions">' +
+        '<button class="act" data-action="toggle" title="' + (t.completed ? 'استرجاع' : 'إنجاز') + '">' + (t.completed ? '↩' : '✔') + '</button>' +
+        (!t.completed ? '<button class="act" data-action="edit" title="تعديل">✎</button>' : '') +
+        '<button class="act" data-action="del" title="حذف">✕</button>' +
+      '</div></div>';
+  }
 
-  // ================= SETTINGS MODAL =================
+  function renderBoard(){
+    var board = document.getElementById('board');
+    var pool = filteredPool();
+    board.innerHTML = '';
+    if(!pool.length){
+      board.innerHTML = tab === 'active'
+        ? '<div class="empty"><div class="ico">🖋</div><h3>صفحة بيضاء…</h3><p>لا مهام مطابقة. قيّد أول مهمة وابدأ الفصل بنظافة.</p></div>'
+        : '<div class="empty"><div class="ico">🌱</div><h3>لا إنجازات بعد</h3><p>أنجز مهمة اليوم وستُختم هنا بأثر الحبر.</p></div>';
+      return;
+    }
+    var canDrag = tab === 'active' && sortMode === 'manual' && view === 'board' && !search && !courseFilter && typeFilter === 'all';
+    pool.forEach(function(t){
+      var card = document.createElement('article');
+      card.className = 'task-card' + (t.completed ? ' completed' : '');
+      card.setAttribute('data-id', t.id);
+      card.setAttribute('data-type', t.type);
+      if(canDrag) card.setAttribute('draggable', 'true');
+      card.innerHTML = '<div class="stamp">تمّ ✓</div>' + cardHTML(t);
+      board.appendChild(card);
+    });
+  }
+
+  /* تفويض أحداث البطاقات */
+  document.getElementById('board').addEventListener('click', function(e){
+    var card = e.target.closest('.task-card'); if(!card) return;
+    var id = card.getAttribute('data-id');
+    var t = tasks.find(function(x){ return x.id === id; }); if(!t) return;
+
+    var sub = e.target.closest('.sub-item');
+    if(sub && !t.completed){
+      var idx = parseInt(sub.getAttribute('data-idx'), 10);
+      t.sub[idx].d = !t.sub[idx].d;
+      persist();
+      if(t.sub.every(function(s){ return s.d; }) && t.sub.length){ /* لا شيء إضافي */ }
+      renderAll();
+      return;
+    }
+    var btn = e.target.closest('.act'); if(!btn) return;
+    var act = btn.getAttribute('data-action');
+    if(act === 'toggle'){
+      t.completed = !t.completed;
+      t.completedAt = t.completed ? Date.now() : null;
+      if(t.completed){
+        var today = todayISO();
+        dayLog[today] = (dayLog[today] || 0) + 1;
+        doneChime();
+        if(t.recur){
+          var clone = { id: uid(), title:t.title, courseId:t.courseId, type:t.type, prio:t.prio||'normal',
+            date: addDaysISO(t.date, 7), time: t.time || '', desc: t.desc || '',
+            sub: (t.sub||[]).map(function(s){ return { t: s.t, d: false }; }),
+            recur: true, completed: false, completedAt: null, createdAt: Date.now() };
+          tasks.push(clone); order.push(clone.id);
+        }
+      }
+      persist();
+      card.classList.add('leaving');
+      setTimeout(renderAll, 260);
+    }else if(act === 'edit'){
+      openTaskModal(id);
+    }else if(act === 'del'){
+      confirmDlg('شطب «' + t.title + '» من الدفتر؟', 'لا يمكن التراجع عن الشطب.').then(function(ok){
+        if(!ok) return;
+        tasks = tasks.filter(function(x){ return x.id !== id; });
+        order = order.filter(function(x){ return x !== id; });
+        persist(); renderAll();
+      });
+    }
+  });
+
+  /* سحب وإفلات */
+  var boardEl = document.getElementById('board');
+  boardEl.addEventListener('dragstart', function(e){
+    var c = e.target.closest('.task-card[draggable="true"]'); if(!c) return;
+    draggedId = c.getAttribute('data-id');
+    c.classList.add('dragging');
+  });
+  boardEl.addEventListener('dragend', function(e){
+    var c = e.target.closest('.task-card'); if(c) c.classList.remove('dragging');
+    draggedId = null;
+  });
+  boardEl.addEventListener('dragover', function(e){ e.preventDefault(); });
+  boardEl.addEventListener('drop', function(e){
+    e.preventDefault();
+    if(!draggedId) return;
+    var target = e.target.closest('.task-card'); if(!target) return;
+    var targetId = target.getAttribute('data-id');
+    if(!targetId || targetId === draggedId) return;
+    order.splice(order.indexOf(draggedId), 1);
+    order.splice(order.indexOf(targetId), 0, draggedId);
+    persist(); renderAll();
+  });
+
+  /* ============ عرض الأسبوع ============ */
+  function renderWeek(){
+    var wv = document.getElementById('weekView');
+    wv.innerHTML = '';
+    var active = tasks.filter(function(t){ return !t.completed; });
+    if(courseFilter) active = active.filter(function(t){ return t.courseId === courseFilter; });
+    if(typeFilter !== 'all') active = active.filter(function(t){ return t.type === typeFilter; });
+    if(search) active = active.filter(function(t){ return (t.title + courseName(t.courseId)).toLowerCase().indexOf(search) !== -1; });
+
+    var days = [];
+    var overdue = active.filter(function(t){ return diffDays(t.date) < 0; });
+    days.push({ key:'over', label:'متأخر', iso:null, list: overdue });
+    for(var i = 0; i < 7; i++){
+      var iso = addDaysISO(todayISO(), i);
+      days.push({ key: iso, iso: iso, label: null, list: active.filter(function(t){ return t.date === iso; }) });
+    }
+    days.forEach(function(d){
+      var col = document.createElement('div');
+      col.className = 'day-col' + (d.key === 'over' ? ' overdue' : (d.iso === todayISO() ? ' today' : ''));
+      var head;
+      if(d.key === 'over') head = '<div class="dw" style="color:var(--red)">متأخرة</div><div class="dn">' + AR.format(d.list.length) + ' مهمة</div>';
+      else {
+        var dt = new Date(d.iso + 'T00:00:00');
+        head = '<div class="dw">' + new Intl.DateTimeFormat('ar',{weekday:'long'}).format(dt) + '</div><div class="dn">' +
+               new Intl.DateTimeFormat('ar',{day:'numeric', month:'long'}).format(dt) + '</div>';
+      }
+      col.innerHTML = '<div class="day-head">' + head + '</div>';
+      if(!d.list.length) col.innerHTML += '<div class="day-empty">— فارغ —</div>';
+      d.list.forEach(function(t){
+        var m = document.createElement('div');
+        m.className = 'mini'; m.setAttribute('data-id', t.id); m.setAttribute('data-type', t.type);
+        m.innerHTML = '<b>' + (t.prio === 'high' ? '🚩 ' : '') + esc(t.title) + '</b><span class="mc">' + esc(courseName(t.courseId)) + (t.time ? ' · ' + esc(t.time) : '') + '</span>';
+        col.appendChild(m);
+      });
+      wv.appendChild(col);
+    });
+  }
+  document.getElementById('weekView').addEventListener('click', function(e){
+    var m = e.target.closest('.mini');
+    if(m) openTaskModal(m.getAttribute('data-id'));
+  });
+
+  function renderAll(){
+    renderHeader(); renderStats(); renderCourses();
+    document.getElementById('board').style.display = view === 'board' ? '' : 'none';
+    document.getElementById('weekView').style.display = view === 'week' ? 'grid' : 'none';
+    if(view === 'board') renderBoard(); else renderWeek();
+    checkAlerts();
+  }
+
+  /* ============ التبويبات والمرشحات ============ */
+  function setTab(t){
+    tab = t;
+    document.getElementById('tabActiveBtn').classList.toggle('active', t === 'active');
+    document.getElementById('tabDoneBtn').classList.toggle('active', t === 'done');
+    document.getElementById('typeFilters').style.display = t === 'active' ? 'flex' : 'none';
+    document.getElementById('sortSelect').style.display = t === 'active' ? '' : 'none';
+    document.getElementById('addTaskBtn').style.display = t === 'active' ? '' : 'none';
+    renderAll();
+  }
+  document.getElementById('tabActiveBtn').addEventListener('click', function(){ setTab('active'); });
+  document.getElementById('tabDoneBtn').addEventListener('click', function(){ setTab('done'); });
+
+  document.getElementById('typeFilters').addEventListener('click', function(e){
+    var b = e.target.closest('button[data-type]'); if(!b) return;
+    typeFilter = b.getAttribute('data-type');
+    document.querySelectorAll('#typeFilters .btn').forEach(function(x){ x.classList.remove('active'); });
+    b.classList.add('active');
+    renderAll();
+  });
+
+  document.getElementById('searchInput').addEventListener('input', function(){ search = this.value.trim().toLowerCase(); renderAll(); });
+  document.getElementById('courseFilterSelect').addEventListener('change', function(){ courseFilter = this.value; renderCourses(); renderAll(); });
+  document.getElementById('sortSelect').addEventListener('change', function(){ sortMode = this.value; renderAll(); });
+
+  document.getElementById('viewBoardBtn').addEventListener('click', function(){ view = 'board';
+    document.getElementById('viewBoardBtn').classList.add('active'); document.getElementById('viewWeekBtn').classList.remove('active'); renderAll(); });
+  document.getElementById('viewWeekBtn').addEventListener('click', function(){ view = 'week';
+    document.getElementById('viewWeekBtn').classList.add('active'); document.getElementById('viewBoardBtn').classList.remove('active'); renderAll(); });
+
+  /* ============ نافذة المهمة ============ */
+  var taskOverlay = document.getElementById('taskOverlay');
+
+  function subRow(val){
+    var row = document.createElement('div');
+    row.className = 'sub-row';
+    row.innerHTML = '<input type="text" placeholder="خطوة…" value="' + esc(val || '') + '"><button type="button" class="rm-sub">✕</button>';
+    row.querySelector('.rm-sub').addEventListener('click', function(){ row.remove(); });
+    return row;
+  }
+  document.getElementById('addSubBtn').addEventListener('click', function(){
+    document.getElementById('subList').appendChild(subRow());
+  });
+
+  function openTaskModal(id){
+    editingId = (typeof id === 'string') ? id : null;
+    renderCourses();
+    document.getElementById('quickCourseRow').style.display = 'none';
+    var subList = document.getElementById('subList'); subList.innerHTML = '';
+    if(editingId){
+      var t = tasks.find(function(x){ return x.id === editingId; }); if(!t) return;
+      document.getElementById('modalTitle').textContent = 'تعديل القيد ✎';
+      document.getElementById('submitBtn').textContent = 'احفظ التعديل';
+      document.getElementById('fTitle').value = t.title;
+      document.getElementById('fCourse').value = t.courseId;
+      document.getElementById('fType').value = t.type;
+      document.getElementById('fPrio').value = t.prio || 'normal';
+      document.getElementById('fDate').value = t.date;
+      document.getElementById('fTime').value = t.time || '';
+      document.getElementById('fRecur').checked = !!t.recur;
+      document.getElementById('fDesc').value = t.desc || '';
+      (t.sub || []).forEach(function(s){ subList.appendChild(subRow(s.t)); });
+    }else{
+      document.getElementById('modalTitle').textContent = 'قيّد مهمة جديدة';
+      document.getElementById('submitBtn').textContent = 'قيّدها في الدفتر ✒';
+      document.getElementById('taskForm').reset();
+      document.getElementById('fDate').value = todayISO();
+    }
+    taskOverlay.classList.add('active');
+    setTimeout(function(){ document.getElementById('fTitle').focus(); }, 120);
+  }
+  function closeTaskModal(){ taskOverlay.classList.remove('active'); editingId = null; }
+
+  document.getElementById('addTaskBtn').addEventListener('click', function(){ openTaskModal(null); });
+  document.getElementById('cancelTaskBtn').addEventListener('click', closeTaskModal);
+
+  document.getElementById('taskForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var courseVal = document.getElementById('fCourse').value;
+    if(courseVal === '__new__' || !courseVal){ document.getElementById('quickCourseInput').focus(); return; }
+    var title = document.getElementById('fTitle').value.trim();
+    var date = document.getElementById('fDate').value;
+    if(!title || !date) return;
+    var newSubs = Array.prototype.slice.call(document.querySelectorAll('#subList input'))
+      .map(function(i){ return i.value.trim(); }).filter(Boolean);
+
+    if(editingId){
+      tasks = tasks.map(function(t){
+        if(t.id !== editingId) return t;
+        var old = t.sub || [];
+        var subs = newSubs.map(function(txt, i){ return { t: txt, d: old[i] ? !!old[i].d : false }; });
+        return Object.assign({}, t, {
+          title: title, courseId: courseVal, type: document.getElementById('fType').value,
+          prio: document.getElementById('fPrio').value, date: date,
+          time: document.getElementById('fTime').value,
+          recur: document.getElementById('fRecur').checked,
+          desc: document.getElementById('fDesc').value.trim(), sub: subs
+        });
+      });
+    }else{
+      var t = { id: uid(), title: title, courseId: courseVal, type: document.getElementById('fType').value,
+        prio: document.getElementById('fPrio').value, date: date, time: document.getElementById('fTime').value,
+        desc: document.getElementById('fDesc').value.trim(),
+        sub: newSubs.map(function(txt){ return { t: txt, d: false }; }),
+        recur: document.getElementById('fRecur').checked,
+        completed: false, completedAt: null, createdAt: Date.now() };
+      tasks.unshift(t); order.unshift(t.id);
+      pinSound();
+    }
+    persist(); closeTaskModal(); setTab('active');
+  });
+
+  /* ============ تأكيد ============ */
+  var confirmOverlay = document.getElementById('confirmOverlay'), confirmResolve = null;
+  function confirmDlg(title, msg){
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMsg').textContent = msg || '';
+    confirmOverlay.classList.add('active');
+    return new Promise(function(res){ confirmResolve = res; });
+  }
+  document.getElementById('confirmOkBtn').addEventListener('click', function(){ confirmOverlay.classList.remove('active'); if(confirmResolve) confirmResolve(true); confirmResolve = null; });
+  document.getElementById('confirmCancelBtn').addEventListener('click', function(){ confirmOverlay.classList.remove('active'); if(confirmResolve) confirmResolve(false); confirmResolve = null; });
+
+  /* ============ الإعدادات ============ */
   var settingsOverlay = document.getElementById('settingsOverlay');
   document.getElementById('openSettingsBtn').addEventListener('click', function(){
-    document.getElementById('usernameInput').value = settings.username;
-    document.getElementById('notifyCheckbox').checked = settings.notificationsEnabled;
-    document.getElementById('soundCheckbox').checked = settings.soundEnabled;
+    document.getElementById('sName').value = settings.name;
+    document.getElementById('sUni').value = settings.uni;
+    document.getElementById('sNotif').checked = settings.notif;
+    document.getElementById('sSound').checked = settings.sound;
     settingsOverlay.classList.add('active');
   });
   document.getElementById('cancelSettingsBtn').addEventListener('click', function(){ settingsOverlay.classList.remove('active'); });
-
-  document.getElementById('notifyCheckbox').addEventListener('change', function(){
-    var box = this;
-    if(box.checked){
-      if(!('Notification' in window)){ box.checked = false; alert('التنبيهات غير مدعومة في هذا المتصفح.'); return; }
-      try{
-        Notification.requestPermission().then(function(perm){
-          if(perm !== 'granted'){ box.checked = false; }
-        });
-      }catch(e){ box.checked = false; }
-    }
-  });
-
   document.getElementById('saveSettingsBtn').addEventListener('click', function(){
-    settings.username = document.getElementById('usernameInput').value.trim();
-    settings.notificationsEnabled = document.getElementById('notifyCheckbox').checked;
-    settings.soundEnabled = document.getElementById('soundCheckbox').checked;
-    persistSettings();
-    renderWelcome();
-    settingsOverlay.classList.remove('active');
+    settings.name = document.getElementById('sName').value.trim();
+    settings.uni = document.getElementById('sUni').value.trim();
+    settings.notif = document.getElementById('sNotif').checked;
+    settings.sound = document.getElementById('sSound').checked;
+    persist(); renderHeader(); settingsOverlay.classList.remove('active');
+  });
+  document.getElementById('sNotif').addEventListener('change', function(){
+    var box = this;
+    if(box.checked && !('Notification' in window)){ box.checked = false; alert('الإشعارات غير مدعومة في هذا المتصفح.'); return; }
+    if(box.checked && Notification.permission === 'default'){
+      Notification.requestPermission().then(function(p){ if(p !== 'granted') box.checked = false; });
+    }
+    if(box.checked && Notification.permission === 'denied'){ box.checked = false; alert('الإشعارات محظورة من إعدادات المتصفح.'); }
   });
 
-  // ---------- export / import ----------
-  var downloadsApi = null;
-  (function initDownloads(){
-    try{
-      if(window.claude && typeof window.claude.use === 'function'){
-        window.claude.use('downloads').then(function(api){
-          downloadsApi = api;
-          document.getElementById('exportBtn').style.display = api ? '' : 'none';
-        }).catch(function(){ downloadsApi = null; });
-      }
-    }catch(e){ /* no host bridge */ }
-  })();
-
+  /* تصدير / استيراد */
   document.getElementById('exportBtn').addEventListener('click', function(){
-    if(!downloadsApi) return;
-    var payload = { exportedAt: new Date().toISOString(), settings: { username: settings.username }, courses: courses, notes: notes };
-    var json = JSON.stringify(payload, null, 2);
-    downloadsApi.save({ filename: 'مهامي-نسخة-احتياطية.json', data: json }).catch(function(){ /* declined or unavailable */ });
+    var payload = { app:'ruznameh', exportedAt: new Date().toISOString(), settings:{ name:settings.name, uni:settings.uni }, courses:courses, tasks:tasks };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ruznameh-backup-' + todayISO() + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
   });
-
   document.getElementById('importBtn').addEventListener('click', function(){ document.getElementById('importInput').click(); });
   document.getElementById('importInput').addEventListener('change', function(e){
-    var file = e.target.files && e.target.files[0];
-    if(!file) return;
+    var f = e.target.files && e.target.files[0]; if(!f) return;
     var reader = new FileReader();
     reader.onload = function(){
-      var parsed;
-      try{ parsed = JSON.parse(reader.result); }catch(err){ alert('الملف غير صالح.'); return; }
-      if(!parsed || !Array.isArray(parsed.notes) || !Array.isArray(parsed.courses)){ alert('صيغة الملف غير متوقعة.'); return; }
-      sketchConfirm('استيراد النسخة الاحتياطية؟', 'سيستبدل هذا كل المساقات والمهام الحالية.').then(function(ok){
+      var p; try{ p = JSON.parse(reader.result); }catch(err){ alert('الملف غير صالح.'); return; }
+      if(!p || !Array.isArray(p.tasks) || !Array.isArray(p.courses)){ alert('صيغة الملف غير متوقعة.'); return; }
+      confirmDlg('استيراد النسخة الاحتياطية؟', 'سيستبدل كل ما في الدفتر الحالي.').then(function(ok){
         if(!ok) return;
-        courses = parsed.courses;
-        notes = parsed.notes.map(function(n){ return Object.assign({ recurring:false, completedAt:null }, n); });
-        if(parsed.settings && typeof parsed.settings.username === 'string') settings.username = parsed.settings.username;
-        manualOrder = notes.map(function(n){ return n.id; });
-        persistCourses(); persistNotes(); persistSettings(); persistOrder();
-        renderWelcome(); renderCourses(); renderNotes(); renderStats();
+        courses = p.courses;
+        tasks = p.tasks.map(function(t){ return Object.assign({ sub:[], prio:'normal', time:'', recur:false, completedAt:null }, t); });
+        order = tasks.map(function(t){ return t.id; });
+        if(p.settings){ if(typeof p.settings.name === 'string') settings.name = p.settings.name; if(typeof p.settings.uni === 'string') settings.uni = p.settings.uni; }
+        persist(); settingsOverlay.classList.remove('active'); renderAll();
       });
     };
-    reader.readAsText(file);
+    reader.readAsText(f);
     e.target.value = '';
   });
-
-  // ================= CUSTOM CONFIRM =================
-  var confirmOverlay = document.getElementById('confirmOverlay');
-  var confirmResolver = null;
-  function sketchConfirm(title, message){
-    document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmMsg').textContent = message || '';
-    confirmOverlay.classList.add('active');
-    return new Promise(function(resolve){ confirmResolver = resolve; });
-  }
-  document.getElementById('confirmOkBtn').addEventListener('click', function(){
-    confirmOverlay.classList.remove('active');
-    if(confirmResolver) confirmResolver(true);
-    confirmResolver = null;
-  });
-  document.getElementById('confirmCancelBtn').addEventListener('click', function(){
-    confirmOverlay.classList.remove('active');
-    if(confirmResolver) confirmResolver(false);
-    confirmResolver = null;
-  });
-
-  // ================= SOUND =================
-  var audioCtx = null;
-  function playPinSound(){
-    if(!settings.soundEnabled) return;
-    try{
-      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      var t = audioCtx.currentTime;
-      var osc = audioCtx.createOscillator();
-      var gain = audioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(740, t);
-      osc.frequency.exponentialRampToValueAtTime(300, t + 0.12);
-      gain.gain.setValueAtTime(0.001, t);
-      gain.gain.exponentialRampToValueAtTime(0.18, t + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(t); osc.stop(t + 0.16);
-    }catch(e){ /* audio unavailable */ }
-  }
-
-  // ================= REMINDERS =================
-  function checkReminders(){
-    var tomorrow = addDaysISO(todayISO(), 1);
-    var due = notes.filter(function(n){ return !n.completed && n.date === tomorrow; });
-    if(due.length === 0) return;
-
-    var banner = document.getElementById('reminderBanner');
-    var list = document.getElementById('reminderList');
-    document.getElementById('reminderTitle').textContent = '🔔 لديك ' + due.length + ' مهمة مستحقة غدًا';
-    list.innerHTML = due.map(function(n){ return '<li>• ' + escapeHtml(n.title) + ' (' + escapeHtml(courseName(n.courseId)) + ')</li>'; }).join('');
-    banner.style.display = 'flex';
-
-    if(settings.notificationsEnabled && ('Notification' in window) && Notification.permission === 'granted'){
-      due.forEach(function(n){
-        if(remindedIds.indexOf(n.id) !== -1) return;
-        try{ new Notification('تذكير بمهمة غدًا 📌', { body: n.title + ' — ' + courseName(n.courseId) }); }catch(e){}
-        remindedIds.push(n.id);
-      });
-      persistReminded();
-    }
-  }
-  document.getElementById('reminderCloseBtn').addEventListener('click', function(){ document.getElementById('reminderBanner').style.display = 'none'; });
-
-  // ================= TABS & FILTERS =================
-  document.getElementById('tabActiveBtn').addEventListener('click', function(){ setTab('active'); });
-  document.getElementById('tabDoneBtn').addEventListener('click', function(){ setTab('done'); });
-  function setTab(tab){
-    currentTab = tab;
-    document.getElementById('tabActiveBtn').classList.toggle('active', tab === 'active');
-    document.getElementById('tabDoneBtn').classList.toggle('active', tab === 'done');
-    document.getElementById('typeFilters').style.display = tab === 'active' ? 'flex' : 'none';
-    document.getElementById('addNoteBtn').style.display = tab === 'active' ? '' : 'none';
-    renderNotes();
-  }
-  document.getElementById('typeFilters').addEventListener('click', function(e){
-    var btn = e.target.closest('button[data-type]');
-    if(!btn) return;
-    currentTypeFilter = btn.getAttribute('data-type');
-    document.querySelectorAll('#typeFilters .sketch-btn').forEach(function(b){ b.classList.remove('active'); });
-    btn.classList.add('active');
-    renderNotes();
-  });
-
-  // ================= BOARD RENDER =================
-  function renderNotes(){
-    var grid = document.getElementById('boardGrid');
-    grid.innerHTML = '';
-
-    var pool = notes.filter(function(n){ return currentTab === 'active' ? !n.completed : n.completed; });
-    if(currentTab === 'active' && currentTypeFilter !== 'all') pool = pool.filter(function(n){ return n.type === currentTypeFilter; });
-    if(courseFilterId) pool = pool.filter(function(n){ return n.courseId === courseFilterId; });
-    if(searchQuery) pool = pool.filter(function(n){ return (n.title || '').toLowerCase().indexOf(searchQuery) !== -1; });
-
-    pool = pool.slice().sort(function(a,b){
-      if(currentTab === 'done') return (b.completedAt || 0) - (a.completedAt || 0);
-      if(sortMode === 'date') return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0);
-      if(sortMode === 'course') {
-        var ca = courseName(a.courseId), cb = courseName(b.courseId);
-        if(ca !== cb) return ca < cb ? -1 : 1;
-        return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0);
-      }
-      // manual
-      return manualOrder.indexOf(a.id) - manualOrder.indexOf(b.id);
+  document.getElementById('wipeBtn').addEventListener('click', function(){
+    confirmDlg('مسح الدفتر بالكامل؟', 'ستُحذف كل المساقات والمهام والإعدادات نهائيًا.').then(function(ok){
+      if(!ok) return;
+      ['ruz_courses','ruz_tasks','ruz_settings','ruz_order','ruz_daylog','ruz_reminded','ruz_sessions','ruz_theme'].forEach(function(k){ try{ localStorage.removeItem(k); }catch(e){} });
+      location.reload();
     });
+  });
 
-    document.getElementById('activeCount').textContent = notes.filter(function(n){ return !n.completed; }).length;
-    document.getElementById('doneCount').textContent = notes.filter(function(n){ return n.completed; }).length;
-    renderStats();
+  /* ============ بومودورو ============ */
+  var pomoOverlay = document.getElementById('pomoOverlay');
+  var pomoTotal = 25 * 60, pomoLeft = pomoTotal, pomoTimer = null, pomoRunning = false;
+  var pomoArc = document.getElementById('pomoArc'), pomoTimeEl = document.getElementById('pomoTime');
+  var C_POMO = 515.2;
 
-    if(pool.length === 0){
-      grid.innerHTML = currentTab === 'active'
-        ? '<div class="empty-state"><div>🧼</div><h3 class="hand">السبورة نظيفة تماماً!</h3><p>لا توجد مهام مطابقة لبحثك أو تصفيتك الحالية.</p></div>'
-        : '<div class="empty-state"><div>🌱</div><h3 class="hand">لا مهام منجزة بعد</h3><p>أول إنجاز لك سيظهر هنا.</p></div>';
-      return;
-    }
-
-    var draggable = (currentTab === 'active' && sortMode === 'manual' && !searchQuery && !courseFilterId && currentTypeFilter === 'all');
-
-    pool.forEach(function(note){
-      var paper = document.createElement('div');
-      paper.className = 'paper-note ' + note.type + (note.completed ? ' completed' : '');
-      paper.setAttribute('data-id', note.id);
-      if(draggable) paper.setAttribute('draggable', 'true');
-
-      var diff = diffDaysFromToday(note.date);
-      var dueClass = '', dueIcon = '📅';
-      if(!note.completed){
-        if(diff < 0){ dueClass = 'due-overdue'; dueIcon = '⏰'; }
-        else if(diff <= 2){ dueClass = 'due-warn'; dueIcon = '⚠️'; }
-      }
-
-      paper.innerHTML =
-        '<div class="pin"></div>' +
-        '<div class="completed-stamp hand">تم الإنجاز</div>' +
-        '<div>' +
-          '<div class="note-header">' +
-            '<span class="course-title">' + escapeHtml(courseName(note.courseId)) + '</span>' +
-            '<span class="badge">' + getTypeName(note.type) + '</span>' +
-          '</div>' +
-          '<div class="note-title">' + escapeHtml(note.title) + (note.recurring ? ' <span class="recur-icon" title="مهمة متكررة أسبوعيًا">🔁</span>' : '') + '</div>' +
-          '<div class="note-desc">' + escapeHtml(note.desc || 'لا توجد ملاحظات.') + '</div>' +
-        '</div>' +
-        '<div class="note-footer">' +
-          '<span class="due-date ' + dueClass + '">' + dueIcon + ' ' + escapeHtml(note.date) + '</span>' +
-          '<div class="actions">' +
-            '<button class="action-btn" data-action="toggle" title="' + (note.completed ? 'استرجاع' : 'تحديد كمُنجز') + '">' + (note.completed ? '↩️' : '✅') + '</button>' +
-            (note.completed ? '' : '<button class="action-btn" data-action="edit" title="تعديل المهمة">✏️</button>') +
-            '<button class="action-btn" data-action="delete" title="حذف الورقة">🗑️</button>' +
-          '</div>' +
-        '</div>';
-      grid.appendChild(paper);
-    });
+  function pomoDraw(){
+    var m = Math.floor(pomoLeft / 60), s = pomoLeft % 60;
+    pomoTimeEl.textContent = pad(m) + ':' + pad(s);
+    pomoArc.style.strokeDashoffset = C_POMO * (1 - pomoLeft / pomoTotal);
   }
-
-  document.getElementById('boardGrid').addEventListener('click', function(e){
-    var actionBtn = e.target.closest('.action-btn');
-    if(!actionBtn) return;
-    var card = e.target.closest('.paper-note');
-    var id = card.getAttribute('data-id');
-    var note = notes.find(function(n){ return n.id === id; });
-    if(!note) return;
-    var action = actionBtn.getAttribute('data-action');
-
-    if(action === 'toggle'){
-      note.completed = !note.completed;
-      note.completedAt = note.completed ? Date.now() : null;
-
-      if(note.completed && note.recurring){
-        var nextDate = addDaysISO(note.date, 7);
-        var clone = { id: uid(), title: note.title, courseId: note.courseId, type: note.type, date: nextDate, desc: note.desc, completed:false, completedAt:null, recurring:true };
-        notes.push(clone);
-        manualOrder.push(clone.id);
-        persistOrder();
-      }
-      persistNotes();
-      card.style.transition = 'opacity .3s ease, transform .3s ease';
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(-8px) scale(.96)';
-      setTimeout(renderNotes, 220);
-    }else if(action === 'edit'){
-      openModal(id);
-    }else if(action === 'delete'){
-      sketchConfirm('حذف هذه الورقة؟', 'لا يمكن التراجع عن هذا الإجراء.').then(function(ok){
-        if(!ok) return;
-        notes = notes.filter(function(n){ return n.id !== id; });
-        manualOrder = manualOrder.filter(function(mid){ return mid !== id; });
-        persistNotes(); persistOrder(); renderNotes();
-      });
-    }
-  });
-
-  // ---------- drag & drop manual priority ----------
-  var grid = document.getElementById('boardGrid');
-  grid.addEventListener('dragstart', function(e){
-    var card = e.target.closest('.paper-note[draggable="true"]');
-    if(!card) return;
-    draggedId = card.getAttribute('data-id');
-    card.classList.add('dragging');
-    try{ e.dataTransfer.setData('text/plain', draggedId); }catch(err){}
-  });
-  grid.addEventListener('dragend', function(e){
-    var card = e.target.closest('.paper-note');
-    if(card) card.classList.remove('dragging');
-    draggedId = null;
-  });
-  grid.addEventListener('dragover', function(e){ e.preventDefault(); });
-  grid.addEventListener('drop', function(e){
-    e.preventDefault();
-    if(!draggedId) return;
-    var targetCard = e.target.closest('.paper-note');
-    var targetId = targetCard ? targetCard.getAttribute('data-id') : null;
-    if(!targetId || targetId === draggedId) return;
-
-    var fromIdx = manualOrder.indexOf(draggedId);
-    var toIdx = manualOrder.indexOf(targetId);
-    if(fromIdx === -1 || toIdx === -1) return;
-    manualOrder.splice(fromIdx, 1);
-    toIdx = manualOrder.indexOf(targetId);
-    manualOrder.splice(toIdx, 0, draggedId);
-    persistOrder();
-    renderNotes();
-  });
-
-  // ================= ADD / EDIT MODAL =================
-  var modalOverlay = document.getElementById('modalOverlay');
-  window.openModal = function(id){
-    editingNoteId = (typeof id === 'string') ? id : null;
-    var modalTitle = document.getElementById('modalTitle');
-    var submitBtn = document.getElementById('submitBtn');
-    renderCourses();
-    document.getElementById('quickAddCourseRow').style.display = 'none';
-
-    if(editingNoteId !== null){
-      var n = notes.find(function(x){ return x.id === editingNoteId; });
-      if(n){
-        document.getElementById('noteTitle').value = n.title;
-        document.getElementById('courseSelect').value = n.courseId;
-        document.getElementById('noteType').value = n.type;
-        document.getElementById('dueDate').value = n.date;
-        document.getElementById('noteDesc').value = n.desc || '';
-        document.getElementById('recurCheckbox').checked = !!n.recurring;
-        modalTitle.textContent = 'تعديل ورقة المهمة ✏️';
-        submitBtn.textContent = 'حفظ التعديلات 💾';
-      }
-    }else{
-      document.getElementById('noteForm').reset();
-      renderCourses();
-      modalTitle.textContent = 'تعليق ورقة جديدة على السبورة';
-      submitBtn.textContent = 'تثبيت بالدبوس 📌';
-    }
-    modalOverlay.classList.add('active');
-  };
-  function closeModal(){
-    modalOverlay.classList.remove('active');
-    document.getElementById('noteForm').reset();
-    document.getElementById('quickAddCourseRow').style.display = 'none';
-    editingNoteId = null;
+  function pomoStop(){ clearInterval(pomoTimer); pomoTimer = null; pomoRunning = false; document.getElementById('pomoStartBtn').textContent = 'ابدأ'; }
+  function pomoSet(min){
+    pomoStop();
+    pomoTotal = min * 60; pomoLeft = pomoTotal;
+    document.getElementById('pomoState').textContent = min >= 20 ? 'جلسة تركيز' : 'استراحة';
+    pomoDraw();
   }
-  document.getElementById('addNoteBtn').addEventListener('click', function(){ openModal(null); });
-  document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
+  document.querySelectorAll('.pomo-presets .btn').forEach(function(b){
+    b.addEventListener('click', function(){ pomoSet(parseInt(b.getAttribute('data-min'), 10)); });
+  });
+  document.getElementById('pomoStartBtn').addEventListener('click', function(){
+    if(pomoRunning){ pomoStop(); return; }
+    pomoRunning = true; this.textContent = 'إيقاف مؤقت';
+    pomoTimer = setInterval(function(){
+      pomoLeft--;
+      if(pomoLeft <= 0){
+        pomoStop(); pomoLeft = 0; pomoDraw();
+        doneChime();
+        var today = todayISO();
+        if(document.getElementById('pomoState').textContent === 'جلسة تركيز'){
+          sessions[today] = (sessions[today] || 0) + 1;
+          save('ruz_sessions', sessions);
+        }
+        if(settings.notif && 'Notification' in window && Notification.permission === 'granted'){
+          try{ new Notification('انتهت جلسة التركيز 🍅', { body: document.getElementById('pomoLabel').value || 'خذ استراحتك الآن.' }); }catch(e){}
+        }
+        renderStats();
+        pomoLeft = pomoTotal; pomoDraw();
+        return;
+      }
+      pomoDraw();
+    }, 1000);
+  });
+  document.getElementById('pomoResetBtn').addEventListener('click', function(){ pomoSet(pomoTotal / 60); });
+  document.getElementById('pomoBtn').addEventListener('click', function(){ pomoOverlay.classList.add('active'); pomoDraw(); });
+  document.getElementById('closePomoBtn').addEventListener('click', function(){ pomoStop(); pomoOverlay.classList.remove('active'); });
 
-  document.getElementById('noteForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    var courseVal = document.getElementById('courseSelect').value;
-    if(courseVal === '__new__' || !courseVal){ document.getElementById('quickCourseInput').focus(); return; }
-    var title = document.getElementById('noteTitle').value.trim();
-    var type = document.getElementById('noteType').value;
-    var date = document.getElementById('dueDate').value;
-    var desc = document.getElementById('noteDesc').value.trim();
-    var recurring = document.getElementById('recurCheckbox').checked;
-    if(!title || !date) return;
+  /* ============ التنبيهات ============ */
+  function checkAlerts(){
+    var box = document.getElementById('alertBox');
+    var over = tasks.filter(function(t){ return !t.completed && diffDays(t.date) < 0; });
+    var tmw  = tasks.filter(function(t){ return !t.completed && diffDays(t.date) === 1; });
+    if(!over.length && !tmw.length){ box.style.display = 'none'; return; }
+    box.style.display = 'flex';
+    box.classList.toggle('good', !over.length);
+    document.getElementById('alertTitle').textContent = over.length
+      ? ('⏰ لديك ' + AR.format(over.length) + ' مهمة متأخرة — عالجها أولًا')
+      : ('🔔 مستحق غدًا: ' + AR.format(tmw.length) + ' مهمة');
+    document.getElementById('alertList').innerHTML =
+      over.slice(0,3).map(function(t){ return '<li>• ' + esc(t.title) + ' — ' + esc(courseName(t.courseId)) + ' (متأخر ' + AR.format(Math.abs(diffDays(t.date))) + ' يوم)</li>'; }).join('') +
+      tmw.slice(0,3).map(function(t){ return '<li>• ' + esc(t.title) + ' — ' + esc(courseName(t.courseId)) + '</li>'; }).join('');
 
-    if(editingNoteId !== null){
-      notes = notes.map(function(n){
-        return n.id === editingNoteId ? Object.assign({}, n, { title:title, courseId:courseVal, type:type, date:date, desc:desc, recurring:recurring }) : n;
+    if(settings.notif && 'Notification' in window && Notification.permission === 'granted'){
+      tmw.forEach(function(t){
+        if(reminded.indexOf(t.id) !== -1) return;
+        try{ new Notification('تذكير بمهمة غدًا 📌', { body: t.title + ' — ' + courseName(t.courseId) }); }catch(e){}
+        reminded.push(t.id);
       });
-    }else{
-      var newNote = { id: uid(), title:title, courseId:courseVal, type:type, date:date, desc:desc, completed:false, completedAt:null, recurring:recurring };
-      notes.unshift(newNote);
-      manualOrder.unshift(newNote.id);
-      persistOrder();
-      playPinSound();
+      if(tmw.length) save('ruz_reminded', reminded);
     }
-    persistNotes();
-    closeModal();
-    setTab('active');
+  }
+  document.getElementById('alertCloseBtn').addEventListener('click', function(){ document.getElementById('alertBox').style.display = 'none'; });
+
+  /* ============ نصيحة ============ */
+  function showTip(){
+    document.getElementById('tipText').textContent = tips[Math.floor(Math.random() * tips.length)];
+  }
+  document.getElementById('refreshTipBtn').addEventListener('click', showTip);
+  setInterval(showTip, 45000);
+
+  /* ============ الوضع الليلي ============ */
+  function applyTheme(){
+    var dark = localStorage.getItem('ruz_theme') === 'dark';
+    document.body.classList.toggle('dark', dark);
+    document.getElementById('themeBtn').textContent = dark ? '☀ نهار' : '☾ ليل';
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.setAttribute('content', dark ? '#3a2b1c' : '#efe2c6');
+  }
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    var dark = !document.body.classList.contains('dark');
+    try{ localStorage.setItem('ruz_theme', dark ? 'dark' : 'light'); }catch(e){}
+    applyTheme();
   });
 
-  // ================= KEYBOARD SHORTCUTS =================
+  /* ============ اختصارات ============ */
   document.addEventListener('keydown', function(e){
-    var anyOverlayOpen = modalOverlay.classList.contains('active') || settingsOverlay.classList.contains('active') || confirmOverlay.classList.contains('active');
+    var tag = (document.activeElement && document.activeElement.tagName || '').toLowerCase();
+    var typing = tag === 'input' || tag === 'textarea' || tag === 'select';
+    var anyOpen = taskOverlay.classList.contains('active') || settingsOverlay.classList.contains('active') ||
+                  confirmOverlay.classList.contains('active') || pomoOverlay.classList.contains('active');
     if(e.key === 'Escape'){
-      if(modalOverlay.classList.contains('active')) closeModal();
+      if(taskOverlay.classList.contains('active')) closeTaskModal();
       if(settingsOverlay.classList.contains('active')) settingsOverlay.classList.remove('active');
-      if(confirmOverlay.classList.contains('active')){ confirmOverlay.classList.remove('active'); if(confirmResolver){ confirmResolver(false); confirmResolver = null; } }
+      if(pomoOverlay.classList.contains('active')){ pomoStop(); pomoOverlay.classList.remove('active'); }
+      if(confirmOverlay.classList.contains('active')){ confirmOverlay.classList.remove('active'); if(confirmResolve){ confirmResolve(false); confirmResolve = null; } }
       return;
     }
-    if(e.key === 'Enter' && !anyOverlayOpen){
-      var tag = (document.activeElement && document.activeElement.tagName || '').toLowerCase();
-      if(tag === 'input' || tag === 'textarea' || tag === 'select') return;
-      if(currentTab === 'active'){ openModal(null); }
-    }
+    if(anyOpen || typing) return;
+    if(e.key === 'Enter' && tab === 'active'){ e.preventDefault(); openTaskModal(null); }
+    if(e.key === '/'){ e.preventDefault(); document.getElementById('searchInput').focus(); }
   });
 
-  // ================= INIT =================
-  initDarkMode();
-  displayRandomTip();
-  renderWelcome();
-  renderCourses();
-  renderNotes();
-  checkReminders();
+  /* ============ انطلاق ============ */
+  applyTheme();
+  showTip();
+  renderAll();
 })();
-  // تسجيل الـ Service Worker لربطه بالتطبيق
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
+</script>
+
+<!-- تفعيل التطبيق كـ PWA: تخزين دائم + عمل دون اتصال -->
+<script>
+if (navigator.storage && navigator.storage.persist) {
+  navigator.storage.persist();
+}
+if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+  window.addEventListener('load', function () {
     navigator.serviceWorker.register('./service-worker.js')
-      .then((registration) => {
-        console.log('تم تسجيل الـ Service Worker بنجاح ✅:', registration.scope);
+      .then(function (reg) {
+        reg.addEventListener('updatefound', function () {
+          var nw = reg.installing;
+          nw.addEventListener('statechange', function () {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+              /* نسخة جديدة متوفرة: حدّث عند إغلاق/فتح المستخدم */
+              if (confirm('توفّرت نسخة جديدة من رزنامة. تحديث الآن؟')) location.reload();
+            }
+          });
+        });
       })
-      .catch((error) => {
-        console.error('فشل تسجيل الـ Service Worker ❌:', error);
-      });
+      .catch(function (e) { console.warn('SW:', e); });
   });
 }
 </script>
