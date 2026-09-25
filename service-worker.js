@@ -1,5 +1,5 @@
 /* رزنامة — Service Worker: عمل دون اتصال + تحديث تلقائي */
-const CACHE_NAME = 'ruznameh-cache-v1';
+const CACHE_NAME = 'ruznameh-cache-v3';
 
 const ASSETS_TO_CACHE = [
   './',
