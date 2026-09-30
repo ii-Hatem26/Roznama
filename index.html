@@ -573,7 +573,12 @@
         <button type="button" class="btn small ghost" id="addSubBtn">＋ أضف خطوة</button>
       </div>
       <div class="form-group">
-        <label class="checkline"><input type="checkbox" id="fRecur"> تتكرر أسبوعيًا 🔁</label>
+        <label>التكرار</label>
+        <select id="fRecur">
+          <option value="none">لا تتكرر</option>
+          <option value="daily">🔁 تتكرر يوميًا</option>
+          <option value="weekly">🔁 تتكرر أسبوعيًا</option>
+        </select>
       </div>
       <div class="form-group">
         <label>ملاحظات</label>
@@ -705,17 +710,17 @@
     tasks = [
       { id: uid(), title:'حل تمرين الشجرة الثنائية', courseId:c1.id, type:'assignment', prio:'high',
         date:addDaysISO(todayISO(),0), time:'', desc:'الفصل الثالث — مسائل ١ إلى ٧.',
-        sub:[{t:'قراءة المحاضرة',d:true},{t:'حل المسائل',d:false},{t:'مراجعة الحلول',d:false}], recur:false,
+        sub:[{t:'قراءة المحاضرة',d:true},{t:'حل المسائل',d:false},{t:'مراجعة الحلول',d:false}], recur:'none',
         completed:false, completedAt:null, createdAt:Date.now() },
       { id: uid(), title:'امتحان قصير — التفاضل والتكامل', courseId:c2.id, type:'exam', prio:'normal',
         date:addDaysISO(todayISO(),4), time:'10:00', desc:'يشمل المقاطع ٥ و٦. خصص ساعتين للمراجعة.',
-        sub:[{t:'تلخيص القوانين',d:false},{t:'حل نموذج امتحان',d:false}], recur:false,
+        sub:[{t:'تلخيص القوانين',d:false},{t:'حل نموذج امتحان',d:false}], recur:'none',
         completed:false, completedAt:null, createdAt:Date.now() },
       { id: uid(), title:'قراءة ورقة بحثية لمناقشتها', courseId:c1.id, type:'project', prio:'low',
-        date:addDaysISO(todayISO(),-1), time:'', desc:'', sub:[], recur:false,
+        date:addDaysISO(todayISO(),-1), time:'', desc:'', sub:[], recur:'none',
         completed:false, completedAt:null, createdAt:Date.now() },
       { id: uid(), title:'تسجيل في منصة المقررات', courseId:c2.id, type:'task', prio:'normal',
-        date:yesterday, time:'', desc:'', sub:[], recur:false,
+        date:yesterday, time:'', desc:'', sub:[], recur:'none',
         completed:true, completedAt:new Date(yesterday+'T20:00:00').getTime(), createdAt:Date.now() }
     ];
     order = tasks.map(function(t){ return t.id; });
@@ -733,6 +738,11 @@
   function persist(){ save('ruz_tasks', tasks); save('ruz_courses', courses); save('ruz_order', order); save('ruz_settings', settings); save('ruz_daylog', dayLog); save('ruz_reminded', reminded); save('ruz_sessions', sessions); }
   function courseName(id){ var c = courses.find(function(x){ return x.id === id; }); return c ? c.name : 'مساق محذوف'; }
   tasks.forEach(function(t){ if(order.indexOf(t.id) === -1) order.unshift(t.id); });
+  /* ترحيل حقل التكرار القديم: true=أسبوعي، false=بلا */
+  tasks.forEach(function(t){
+    if(t.recur === true) t.recur = 'weekly';
+    else if(t.recur !== 'daily' && t.recur !== 'weekly') t.recur = 'none';
+  });
   order = order.filter(function(id){ return tasks.some(function(t){ return t.id === id; }); });
 
   /* حالة العرض */
@@ -904,19 +914,19 @@
     var doneSubs = subs.filter(function(s){ return s.d; }).length;
     var subHtml = '';
     if(subs.length){
-      var shown = subs.slice(0, 3).map(function(s, i){
+      var shown = subs.map(function(s, i){
         return '<div class="sub-item' + (s.d ? ' done' : '') + '" data-idx="' + i + '"><span class="box">✓</span><span>' + esc(s.t) + '</span></div>';
       }).join('');
-      var more = subs.length > 3 ? '<span class="sub-more">+' + AR.format(subs.length - 3) + ' أخرى · </span>' : '';
       var pctS = Math.round(doneSubs / subs.length * 100);
       subHtml = '<div class="subs">' + shown + '<div style="display:flex;align-items:center;gap:6px">' +
         '<div class="subtrack" style="flex:1;margin-top:4px"><i style="width:' + pctS + '%"></i></div>' +
-        more + '<span class="sub-more">' + AR.format(doneSubs) + '/' + AR.format(subs.length) + '</span></div></div>';
+        '<span class="sub-more">' + AR.format(doneSubs) + '/' + AR.format(subs.length) + '</span></div></div>';
     }
+    var recurIco = (t.recur === 'daily') ? '<span title="تتكرر يوميًا">🔁</span>' : (t.recur === 'weekly') ? '<span title="تتكرر أسبوعيًا">🔁</span>' : '';
     return '' +
     '<div class="card-top"><span class="course-name">' + esc(courseName(t.courseId)) + '</span>' +
       '<span class="badges">' + prioBadge + '<span class="badge">' + TYPE_NAME[t.type] + '</span></span></div>' +
-    '<div class="task-title"><span>' + esc(t.title) + '</span>' + (t.recur ? '<span title="متكررة أسبوعيًا">🔁</span>' : '') + '</div>' +
+    '<div class="task-title"><span>' + esc(t.title) + '</span>' + recurIco + '</div>' +
     (t.desc ? '<div class="task-desc">' + esc(t.desc) + '</div>' : '') +
     subHtml +
     '<div class="card-foot"><span class="due ' + dueCls + '">' + dueIco + fmtDay(t.date) + (t.time ? ' · ' + esc(t.time) : '') + '</span>' +
@@ -973,11 +983,12 @@
         var today = todayISO();
         dayLog[today] = (dayLog[today] || 0) + 1;
         doneChime();
-        if(t.recur){
+        if(t.recur === 'daily' || t.recur === 'weekly'){
+          var step = (t.recur === 'daily') ? 1 : 7;
           var clone = { id: uid(), title:t.title, courseId:t.courseId, type:t.type, prio:t.prio||'normal',
-            date: addDaysISO(t.date, 7), time: t.time || '', desc: t.desc || '',
+            date: addDaysISO(t.date, step), time: t.time || '', desc: t.desc || '',
             sub: (t.sub||[]).map(function(s){ return { t: s.t, d: false }; }),
-            recur: true, completed: false, completedAt: null, createdAt: Date.now() };
+            recur: t.recur, completed: false, completedAt: null, createdAt: Date.now() };
           tasks.push(clone); order.push(clone.id);
         }
       }
@@ -1128,13 +1139,14 @@
       document.getElementById('fPrio').value = t.prio || 'normal';
       document.getElementById('fDate').value = t.date;
       document.getElementById('fTime').value = t.time || '';
-      document.getElementById('fRecur').checked = !!t.recur;
+      document.getElementById('fRecur').value = (t.recur === 'daily' || t.recur === 'weekly') ? t.recur : 'none';
       document.getElementById('fDesc').value = t.desc || '';
       (t.sub || []).forEach(function(s){ subList.appendChild(subRow(s.t)); });
     }else{
       document.getElementById('modalTitle').textContent = 'قيّد مهمة جديدة';
       document.getElementById('submitBtn').textContent = 'قيّدها في الدفتر ✒';
       document.getElementById('taskForm').reset();
+      document.getElementById('fRecur').value = 'none';
       document.getElementById('fDate').value = todayISO();
     }
     taskOverlay.classList.add('active');
@@ -1173,7 +1185,7 @@
         prio: document.getElementById('fPrio').value, date: date, time: document.getElementById('fTime').value,
         desc: document.getElementById('fDesc').value.trim(),
         sub: newSubs.map(function(txt){ return { t: txt, d: false }; }),
-        recur: document.getElementById('fRecur').checked,
+        recur: document.getElementById('fRecur').value,
         completed: false, completedAt: null, createdAt: Date.now() };
       tasks.unshift(t); order.unshift(t.id);
       pinSound();
@@ -1238,7 +1250,8 @@
       confirmDlg('استيراد النسخة الاحتياطية؟', 'سيستبدل كل ما في الدفتر الحالي.').then(function(ok){
         if(!ok) return;
         courses = p.courses;
-        tasks = p.tasks.map(function(t){ return Object.assign({ sub:[], prio:'normal', time:'', recur:false, completedAt:null }, t); });
+        tasks = p.tasks.map(function(t){ return Object.assign({ sub:[], prio:'normal', time:'', recur:'none', completedAt:null }, t); });
+        tasks.forEach(function(t){ if(t.recur === true) t.recur = 'weekly'; else if(t.recur !== 'daily' && t.recur !== 'weekly') t.recur = 'none'; });
         order = tasks.map(function(t){ return t.id; });
         if(p.settings){ if(typeof p.settings.name === 'string') settings.name = p.settings.name; if(typeof p.settings.uni === 'string') settings.uni = p.settings.uni; }
         persist(); settingsOverlay.classList.remove('active'); renderAll();
