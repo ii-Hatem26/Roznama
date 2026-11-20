@@ -386,6 +386,10 @@
   .pomo-time span{ font-size:.75rem; color:var(--muted); font-weight:600; }
   .pomo-presets{ display:flex; gap:6px; }
   .pomo-ctl{ display:flex; gap:8px; }
+  .pomo-presets{ flex-wrap:wrap; justify-content:center; }
+  .pomo-custom{ display:flex; align-items:center; gap:8px; width:100%; font-size:.82rem; font-weight:600; }
+  .pomo-custom input{ width:76px; text-align:center; padding:6px 8px; }
+  .pomo-custom label{ flex:1; }
 
   footer.colophon{
     max-width:1360px; margin:36px auto 0; text-align:center;
@@ -401,6 +405,17 @@
     .board{ grid-template-columns:1fr; }
     .topbar{ justify-content:center; }
   }
+
+  .fchart{ display:flex; align-items:flex-end; gap:8px; height:110px; margin:4px 0 10px; }
+  .fchart .col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; font-size:.68rem; color:var(--muted); gap:4px; }
+  .fchart .bar{ width:100%; min-height:4px; border-radius:8px 8px 4px 4px; background:var(--accent); transition:height .5s; }
+  .fchart .col.today .bar{ box-shadow:0 0 12px rgba(109,94,252,.6); }
+  .fcourses{ list-style:none; font-size:.8rem; display:grid; gap:6px; }
+  .fcourses li{ display:flex; justify-content:space-between; gap:8px; padding:6px 10px; border-radius:10px; background:var(--paper-2); }
+  .pomo-opts{ display:grid; gap:8px; width:100%; }
+  .pomo-dots{ display:flex; gap:6px; justify-content:center; font-size:.72rem; color:var(--muted); align-items:center; }
+  .pomo-dots i{ width:10px; height:10px; border-radius:50%; background:var(--line); display:inline-block; }
+  .pomo-dots i.on{ background:var(--accent); box-shadow:0 0 8px var(--accent); }
 </style>
 <base target="_blank">
 </head>
@@ -452,6 +467,12 @@
         </div>
       </div>
       <div class="streak-line"><span class="flame" id="flameIco">🔥</span><span id="streakText">سلسلة الإنجاز: يوم واحد</span><span style="margin-inline-start:auto">🍅 <b id="pomoToday">٠</b> اليوم</span></div>
+    </section>
+
+    <section class="panel" id="focusPanel">
+      <h2>رصد التركيز <span class="hint" id="focusTotal"></span></h2>
+      <div class="fchart" id="fChart"></div>
+      <ul class="fcourses" id="fCourses"></ul>
     </section>
 
     <section class="panel">
@@ -647,13 +668,27 @@
         <div class="pomo-time"><b id="pomoTime">25:00</b><span id="pomoState">جلسة تركيز</span></div>
       </div>
       <div class="pomo-presets">
-        <button class="btn small" data-min="25" type="button">تركيز 25</button>
-        <button class="btn small" data-min="5" type="button">راحة 5</button>
-        <button class="btn small" data-min="15" type="button">راحة 15</button>
+        <button class="btn small" data-min="25" data-focus="1" type="button">تركيز 25</button>
+        <button class="btn small" data-min="50" data-focus="1" type="button">تركيز 50</button>
+        <button class="btn small" data-min="5" data-focus="0" type="button">راحة 5</button>
+        <button class="btn small" data-min="15" data-focus="0" type="button">راحة 15</button>
       </div>
+      <div class="pomo-custom">
+        <label for="pomoCustomMin">مدة مخصّصة (دقائق)</label>
+        <input type="number" id="pomoCustomMin" min="1" max="180" step="1" value="25" inputmode="numeric">
+        <button class="btn small" id="pomoApplyBtn" type="button">تطبيق</button>
+      </div>
+      <label class="checkline"><input type="checkbox" id="pomoFocusChk" checked> جلسة تركيز (تُحتسب في الإحصاءات)</label>
       <div class="pomo-ctl">
         <button class="btn primary" id="pomoStartBtn" type="button" style="flex:1;">ابدأ</button>
         <button class="btn" id="pomoResetBtn" type="button">إعادة</button>
+        <button class="btn" id="pomoFloatBtn" type="button" title="نافذة عائمة فوق التطبيقات الأخرى">🪟 عائم</button>
+      </div>
+      <div class="pomo-dots" id="pomoDots"></div>
+      <div class="pomo-opts">
+        <select id="pomoTask" aria-label="ربط الجلسة بمهمة"></select>
+        <select id="pomoSound" aria-label="صوت التنبيه"><option value="bell">🔔 جرس</option><option value="soft">🎵 نغمة هادئة</option><option value="wood">🪵 نقرة</option><option value="none">🔇 صامت</option></select>
+        <label class="checkline"><input type="checkbox" id="pomoAuto"> الانتقال التلقائي بين التركيز والاستراحة</label>
       </div>
       <input type="text" id="pomoLabel" placeholder="ماذا ستدرس في هذه الجلسة؟ (اختياري)" style="text-align:center;">
     </div>
@@ -1263,7 +1298,7 @@
   document.getElementById('wipeBtn').addEventListener('click', function(){
     confirmDlg('مسح الدفتر بالكامل؟', 'ستُحذف كل المساقات والمهام والإعدادات نهائيًا.').then(function(ok){
       if(!ok) return;
-      ['ruz_courses','ruz_tasks','ruz_settings','ruz_order','ruz_daylog','ruz_reminded','ruz_sessions','ruz_theme'].forEach(function(k){ try{ localStorage.removeItem(k); }catch(e){} });
+      ['ruz_courses','ruz_tasks','ruz_settings','ruz_order','ruz_daylog','ruz_reminded','ruz_sessions','ruz_theme','ruz_pomo','ruz_pomo_opts','ruz_focusmin','ruz_coursemin'].forEach(function(k){ try{ localStorage.removeItem(k); }catch(e){} });
       location.reload();
     });
   });
@@ -1278,43 +1313,122 @@
     var m = Math.floor(pomoLeft / 60), s = pomoLeft % 60;
     pomoTimeEl.textContent = pad(m) + ':' + pad(s);
     pomoArc.style.strokeDashoffset = C_POMO * (1 - pomoLeft / pomoTotal);
+    floatDraw();
   }
   function pomoStop(){ clearInterval(pomoTimer); pomoTimer = null; pomoRunning = false; document.getElementById('pomoStartBtn').textContent = 'ابدأ'; }
-  function pomoSet(min){
+  var pomoFocusChk = document.getElementById('pomoFocusChk'), pomoCustom = document.getElementById('pomoCustomMin');
+  var pomoEnd = 0;
+  var pomoSound = document.getElementById('pomoSound'), pomoAuto = document.getElementById('pomoAuto'), pomoTask = document.getElementById('pomoTask');
+  var fmin = load('ruz_focusmin', {}), cmin = load('ruz_coursemin', {}), cycle = 0, focusMin = 25, actx = null;
+  function isoOf(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function chime(kind){
+    if(kind === 'none') return;
+    try{
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      var seq = { bell:[[880,0],[1320,.18],[1760,.36]], soft:[[523,0],[659,.25],[784,.5]], wood:[[300,0],[300,.15]] }[kind] || [[880,0]];
+      seq.forEach(function(n){
+        var o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime + n[1];
+        o.type = kind === 'wood' ? 'square' : 'sine'; o.frequency.value = n[0];
+        g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.25, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + .6);
+        o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + .65);
+      });
+    }catch(e){}
+  }
+  function logFocus(min){
+    var d = isoOf(new Date()); fmin[d] = (fmin[d] || 0) + min; save('ruz_focusmin', fmin);
+    var tk = tasks.filter(function(x){ return String(x.id) === pomoTask.value; })[0];
+    if(tk){ tk.focusMin = (tk.focusMin || 0) + min; cmin[tk.courseId] = (cmin[tk.courseId] || 0) + min; save('ruz_coursemin', cmin); persist(); }
+  }
+  function renderFocus(){
+    var chart = document.getElementById('fChart'), days = [], max = 1, total = 0, i, d;
+    for(i = 6; i >= 0; i--){ d = new Date(); d.setDate(d.getDate() - i); var m = fmin[isoOf(d)] || 0; total += m; max = Math.max(max, m); days.push({ d: d, m: m, today: i === 0 }); }
+    chart.innerHTML = days.map(function(x){
+      return '<div class="col' + (x.today ? ' today' : '') + '" title="' + x.m + ' د"><span>' + (x.m ? AR.format(x.m) : '') + '</span><div class="bar" style="height:' + Math.round(x.m / max * 70) + 'px"></div><span>' + x.d.toLocaleDateString('ar', { weekday:'short' }) + '</span></div>';
+    }).join('');
+    document.getElementById('focusTotal').textContent = AR.format(total) + ' دقيقة / أسبوع';
+    var rows = Object.keys(cmin).sort(function(a, b){ return cmin[b] - cmin[a]; }).slice(0, 5);
+    document.getElementById('fCourses').innerHTML = rows.length ? rows.map(function(k){ return '<li><span>' + esc(courseName(k)) + '</span><b>' + AR.format(cmin[k]) + ' د</b></li>'; }).join('') : '<li style="color:var(--muted)">اربط جلسة تركيز بمهمة لتظهر هنا ساعات كل مساق.</li>';
+  }
+  function pomoDots(){ var h = ''; for(var i = 0; i < 4; i++) h += '<i class="' + (i < cycle % 4 || (cycle && cycle % 4 === 0 && i < 4) ? 'on' : '') + '"></i>'; document.getElementById('pomoDots').innerHTML = h + '<span>الدورة ' + AR.format(cycle) + '</span>'; }
+  function fillTasks(){
+    pomoTask.innerHTML = '<option value="">— بدون ربط بمهمة —</option>' + tasks.filter(function(t){ return !t.completed; }).map(function(t){ return '<option value="' + esc(String(t.id)) + '">' + esc(t.title) + ' · ' + esc(courseName(t.courseId)) + '</option>'; }).join('');
+  }
+  var po = load('ruz_pomo_opts', {}); pomoSound.value = po.sound || 'bell'; pomoAuto.checked = !!po.auto;
+  [pomoSound, pomoAuto].forEach(function(el){ el.addEventListener('change', function(){ save('ruz_pomo_opts', { sound: pomoSound.value, auto: pomoAuto.checked }); if(el === pomoSound) chime(pomoSound.value); }); });
+  function pomoSet(min, focus){
     pomoStop();
+    min = Math.min(180, Math.max(1, Math.round(Number(min)) || 25));
+    if(typeof focus === 'boolean') pomoFocusChk.checked = focus;
     pomoTotal = min * 60; pomoLeft = pomoTotal;
-    document.getElementById('pomoState').textContent = min >= 20 ? 'جلسة تركيز' : 'استراحة';
+    pomoCustom.value = min;
+    document.getElementById('pomoState').textContent = pomoFocusChk.checked ? 'جلسة تركيز' : 'استراحة';
+    save('ruz_pomo', { min: min, focus: pomoFocusChk.checked });
     pomoDraw();
   }
   document.querySelectorAll('.pomo-presets .btn').forEach(function(b){
-    b.addEventListener('click', function(){ pomoSet(parseInt(b.getAttribute('data-min'), 10)); });
+    b.addEventListener('click', function(){ pomoSet(parseInt(b.getAttribute('data-min'), 10), b.getAttribute('data-focus') === '1'); });
   });
+  document.getElementById('pomoApplyBtn').addEventListener('click', function(){ pomoSet(pomoCustom.value); });
+  pomoCustom.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); pomoSet(pomoCustom.value); } });
+  pomoFocusChk.addEventListener('change', function(){ pomoSet(pomoTotal / 60); });
   document.getElementById('pomoStartBtn').addEventListener('click', function(){
     if(pomoRunning){ pomoStop(); return; }
+    if(actx && actx.state === 'suspended') actx.resume();
     pomoRunning = true; this.textContent = 'إيقاف مؤقت';
+    pomoEnd = Date.now() + pomoLeft * 1000;
     pomoTimer = setInterval(function(){
-      pomoLeft--;
+      pomoLeft = Math.max(0, Math.ceil((pomoEnd - Date.now()) / 1000));
       if(pomoLeft <= 0){
         pomoStop(); pomoLeft = 0; pomoDraw();
-        doneChime();
-        var today = todayISO();
-        if(document.getElementById('pomoState').textContent === 'جلسة تركيز'){
-          sessions[today] = (sessions[today] || 0) + 1;
-          save('ruz_sessions', sessions);
-        }
+        var wasFocus = pomoFocusChk.checked, mins = Math.round(pomoTotal / 60), today = todayISO();
+        chime(pomoSound.value);
+        if(wasFocus){ sessions[today] = (sessions[today] || 0) + 1; save('ruz_sessions', sessions); logFocus(mins); cycle++; focusMin = mins; }
         if(settings.notif && 'Notification' in window && Notification.permission === 'granted'){
-          try{ new Notification('انتهت جلسة التركيز 🍅', { body: document.getElementById('pomoLabel').value || 'خذ استراحتك الآن.' }); }catch(e){}
+          try{ new Notification(wasFocus ? 'انتهت جلسة التركيز 🍅' : 'انتهت الاستراحة ⏰', { body: document.getElementById('pomoLabel').value || (wasFocus ? 'خذ استراحتك الآن.' : 'حان وقت العودة للدراسة.') }); }catch(e){}
         }
-        renderStats();
-        pomoLeft = pomoTotal; pomoDraw();
+        renderStats(); renderFocus();
+        if(pomoAuto.checked){
+          pomoSet(wasFocus ? (cycle % 4 === 0 ? 15 : 5) : focusMin, !wasFocus);
+          document.getElementById('pomoStartBtn').click();
+        } else { pomoLeft = pomoTotal; pomoDraw(); }
+        pomoDots();
         return;
       }
       pomoDraw();
     }, 1000);
   });
+  (function(){ var p = load('ruz_pomo', null); if(p && p.min){ pomoFocusChk.checked = p.focus !== false; pomoSet(p.min); } })();
+  /* نافذة عائمة (Picture-in-Picture) */
+  var floatCv = document.createElement('canvas'), floatVid = document.createElement('video'), floatOn = false;
+  floatCv.width = 480; floatCv.height = 270; floatVid.muted = true; floatVid.setAttribute('playsinline', '');
+  function floatDraw(){
+    if(!floatOn) return;
+    var c = floatCv.getContext('2d'), cs = getComputedStyle(document.body), g = function(k){ return cs.getPropertyValue(k).trim(); };
+    c.fillStyle = g('--paper'); c.fillRect(0, 0, 480, 270);
+    c.lineWidth = 14; c.lineCap = 'round';
+    c.strokeStyle = g('--line'); c.beginPath(); c.arc(240, 135, 100, 0, 6.2832); c.stroke();
+    c.strokeStyle = g('--accent'); c.beginPath(); c.arc(240, 135, 100, -1.5708, -1.5708 + 6.2832 * (pomoLeft / pomoTotal)); c.stroke();
+    c.fillStyle = g('--ink'); c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.font = '700 64px "IBM Plex Sans Arabic",sans-serif'; c.fillText(pad(Math.floor(pomoLeft / 60)) + ':' + pad(pomoLeft % 60), 240, 128);
+    c.fillStyle = g('--muted'); c.font = '600 22px "IBM Plex Sans Arabic",sans-serif';
+    c.fillText(pomoFocusChk.checked ? 'جلسة تركيز' : 'استراحة', 240, 186);
+  }
+  floatVid.addEventListener('leavepictureinpicture', function(){ floatOn = false; });
+  document.getElementById('pomoFloatBtn').addEventListener('click', function(){
+    if(document.pictureInPictureElement){ document.exitPictureInPicture(); return; }
+    if(!document.pictureInPictureEnabled || !floatCv.captureStream){ alert('متصفحك لا يدعم النافذة العائمة. جرّب Chrome أو Edge أو Safari حديثًا.'); return; }
+    floatOn = true; floatDraw();
+    if(!floatVid.srcObject) floatVid.srcObject = floatCv.captureStream(5);
+    try{
+      navigator.mediaSession.setActionHandler('play', function(){ if(!pomoRunning) document.getElementById('pomoStartBtn').click(); });
+      navigator.mediaSession.setActionHandler('pause', function(){ if(pomoRunning) document.getElementById('pomoStartBtn').click(); });
+    }catch(e){}
+    floatVid.play().then(function(){ return floatVid.requestPictureInPicture(); }).then(function(){ pomoOverlay.classList.remove('active'); })
+      .catch(function(){ floatOn = false; alert('تعذّر فتح النافذة العائمة على هذا الجهاز.'); });
+  });
   document.getElementById('pomoResetBtn').addEventListener('click', function(){ pomoSet(pomoTotal / 60); });
-  document.getElementById('pomoBtn').addEventListener('click', function(){ pomoOverlay.classList.add('active'); pomoDraw(); });
-  document.getElementById('closePomoBtn').addEventListener('click', function(){ pomoStop(); pomoOverlay.classList.remove('active'); });
+  document.getElementById('pomoBtn').addEventListener('click', function(){ fillTasks(); pomoDots(); pomoOverlay.classList.add('active'); pomoDraw(); });
+  document.getElementById('closePomoBtn').addEventListener('click', function(){ if(!floatOn) pomoStop(); pomoOverlay.classList.remove('active'); });
 
   /* ============ التنبيهات ============ */
   function checkAlerts(){
@@ -1372,7 +1486,7 @@
     if(e.key === 'Escape'){
       if(taskOverlay.classList.contains('active')) closeTaskModal();
       if(settingsOverlay.classList.contains('active')) settingsOverlay.classList.remove('active');
-      if(pomoOverlay.classList.contains('active')){ pomoStop(); pomoOverlay.classList.remove('active'); }
+      if(pomoOverlay.classList.contains('active')){ if(!floatOn) pomoStop(); pomoOverlay.classList.remove('active'); }
       if(confirmOverlay.classList.contains('active')){ confirmOverlay.classList.remove('active'); if(confirmResolve){ confirmResolve(false); confirmResolve = null; } }
       return;
     }
@@ -1385,6 +1499,7 @@
   applyTheme();
   showTip();
   renderAll();
+  renderFocus();
 })();
 </script>
 
